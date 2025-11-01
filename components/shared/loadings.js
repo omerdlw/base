@@ -3,7 +3,7 @@
 import Icon from "@/components/icon";
 import { CN } from "@/lib/utils";
 
-export default function Loading({
+export default function LoadingScreen({
   icon = "mingcute:loading-3-fill",
   fullScreen = false,
   size = 40,
@@ -11,9 +11,8 @@ export default function Loading({
   text,
 }) {
   const containerClasses = CN(
-    fullScreen && "h-screen w-screen fixed inset-0 z-50",
+    "h-screen w-screen fixed inset-0 z-50",
     "flex flex-col items-center justify-center gap-4",
-    !fullScreen && "p-4",
     className,
   );
 
