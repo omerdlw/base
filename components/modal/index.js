@@ -103,7 +103,7 @@ const Modal = () => {
           style={{ zIndex: Z_INDEX.MODAL }}
         >
           <motion.div
-            className="fixed inset-0 bg-white/80 dark:bg-black/60"
+            className="fixed inset-0 bg-white/60 dark:bg-black/40"
             style={{ zIndex: Z_INDEX.MODAL_BACKDROP }}
             variants={backdropVariants}
             onClick={closeModal}

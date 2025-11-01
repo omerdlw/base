@@ -10,7 +10,7 @@ import Icon from "@/components/icon";
 // ============================================================================
 
 const COMPONENT_STYLES = {
-  base: "center cursor-pointer group rounded-primary bg-white/80 dark:bg-black/40 border border-base/10 hover:border-primary p-1 transition",
+  base: "center cursor-pointer group rounded-primary bg-white/60 dark:bg-black/40 border border-base/10 hover:border-primary p-1 transition",
   iconContainer: "center w-full h-full",
 };
 
@@ -265,7 +265,7 @@ const SelectboxMenu = memo(
     return (
       <div
         className={CN(
-          "absolute rounded-primary p-1 backdrop-blur-lg bg-white/95 dark:bg-black/90 border border-base/10 z-50",
+          "absolute rounded-primary p-1 backdrop-blur-lg bg-white/60 dark:bg-black/40 border border-base/10 z-50",
           SELECTBOX_POSITION_CLASSES[direction],
           rounded && `rounded-${rounded}`,
           menuWidth || "w-full",
@@ -527,7 +527,7 @@ export const Input = memo(
           className={CN(
             "group flex items-center w-full rounded-primary border transition focus-within:border-primary",
             error ? "border-error" : "border-base/10",
-            "bg-white/80 dark:bg-black/20",
+            "bg-white/60 dark:bg-black/40",
             rounded && `rounded-${rounded}`,
             sizeConfig.button.withText,
             icon && "p-1",
@@ -627,7 +627,7 @@ export const Tooltip = memo(
         <div
           className={CN(
             "opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none",
-            "backdrop-blur-xl bg-white/80 dark:bg-black/20 border border-base/10",
+            "backdrop-blur-xl bg-white/60 dark:bg-black/40 border border-base/10",
             "absolute whitespace-nowrap rounded-md px-3 py-2 text-sm",
             TOOLTIP_POSITION_CLASSES[position],
             rounded && `rounded-${rounded}`,

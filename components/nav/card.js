@@ -70,7 +70,7 @@ export default function Card({
 
   return (
     <motion.div
-      className={`absolute left-1/2 -translate-x-1/2 w-full h-auto cursor-pointer rounded-primary bg-white/80 dark:bg-black/40 backdrop-blur-lg border-2 p-3 transition transform-gpu will-change-transform ${
+      className={`absolute left-1/2 -translate-x-1/2 w-full h-auto cursor-pointer rounded-primary bg-white/60 dark:bg-black/40 backdrop-blur-lg border-2 p-3 transition transform-gpu will-change-transform ${
         expanded
           ? isIndividualHovered
             ? "border-primary"
@@ -123,7 +123,7 @@ export default function Card({
         </button>
       )}
       <div className="flex items-center h-auto space-x-3">
-        <Badge icon={link.icon} />
+        <Badge isStackHovered={isStackHovered} icon={link.icon} />
         <div className="flex-1 flex flex-col -space-y-0.5 overflow-hidden">
           <Title text={link.name} />
           <Description

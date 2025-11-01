@@ -6,8 +6,8 @@ export function NavCardSkeleton({ className }) {
   return (
     <div
       className={CN(
-        "w-[300px] absolute left-1/2 -translate-x-1/2 h-auto cursor-pointer rounded-primary bg-white/80 dark:bg-black/20 border border-base/10 p-3 backdrop-blur-lg",
-        className
+        "w-[300px] absolute left-1/2 -translate-x-1/2 h-auto cursor-pointer rounded-primary bg-white/60 dark:bg-black/40 border border-base/10 p-3 backdrop-blur-lg",
+        className,
       )}
     >
       <div className="flex items-center h-auto gap-3 animate-pulse">

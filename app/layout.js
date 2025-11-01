@@ -12,8 +12,8 @@ export default function RootLayout({ children }) {
       >
         <AppProviders>
           <Controls />
-          {children}
           <Nav />
+          {children}
         </AppProviders>
       </body>
     </html>

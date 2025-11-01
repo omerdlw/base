@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Iconify from "@/components/icon";
+import classNames from "classnames";
 
 export const Description = ({ text }) => {
   return (
@@ -20,20 +21,27 @@ export const Description = ({ text }) => {
   );
 };
 
-export const Icon = ({ icon }) => {
+export const Icon = ({ icon, isStackHovered }) => {
   const isUrl = typeof icon === "string" && icon.startsWith("http");
 
   if (isUrl) {
     return (
       <div
-        className="w-[52px] h-[52px] rounded-secondary bg-cover bg-center bg-no-repeat"
+        className="w-[52px] h-[52px] rounded-secondary bg-cover bg-center bg-no-repeat transition"
         style={{ backgroundImage: `url(${icon})` }}
       />
     );
   }
 
   return (
-    <div className="flex items-center justify-center size-[52px] rounded-secondary bg-base/5">
+    <div
+      className={classNames(
+        "flex items-center justify-center size-[52px] rounded-secondary bg-base/5 transition",
+        {
+          "bg-primary text-white": isStackHovered,
+        },
+      )}
+    >
       <span className="text-2xl">
         <Iconify icon={icon} />
       </span>
