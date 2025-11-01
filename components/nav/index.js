@@ -42,7 +42,7 @@ export default function Nav() {
       <AnimatePresence>
         {expanded && (
           <motion.div
-            className="fixed inset-0 backdrop-blur-xl backdrop-saturate-150 backdrop-contrast-125 z-40 cursor-pointer"
+            className="fixed inset-0 backdrop-blur-xl z-40 cursor-pointer"
             onClick={() => setExpanded(false)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

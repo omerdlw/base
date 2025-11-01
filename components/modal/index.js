@@ -37,6 +37,17 @@ const modalVariantsCenter = {
   hidden: { y: "-50px", scale: 0.95, opacity: 0 },
 };
 
+const modalVariantsTop = {
+  exit: {
+    y: "-50px",
+    scale: 0.95,
+    opacity: 0,
+    transition: { duration: ANIMATION_DURATIONS.FAST / 1000 },
+  },
+  visible: { y: 0, scale: 1, opacity: 1, transition: springTransition },
+  hidden: { y: "-50px", scale: 0.95, opacity: 0 },
+};
+
 const modalVariantsLeft = {
   exit: {
     x: "-100%",
@@ -63,6 +74,8 @@ const getModalVariants = (position) => {
       return modalVariantsLeft;
     case "right":
       return modalVariantsRight;
+    case "top":
+      return modalVariantsTop;
     default:
       return modalVariantsCenter;
   }

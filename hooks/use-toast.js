@@ -4,7 +4,7 @@ const useToast = () => {
   const { openModal } = useModal();
 
   const showToast = (message, type = "INFO", duration = 3000) => {
-    openModal("TOAST_MODAL", { message, type, duration }, "bottom");
+    openModal("TOAST_MODAL", { message, type, duration }, "top");
   };
 
   const toast = {
