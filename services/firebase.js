@@ -1,19 +1,19 @@
 import { initializeApp, getApps } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
-const firebaseConfig = {
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+const DATABASE_CONFIG = {
+  databaseURL: "https://povs-xyz-default-rtdb.firebaseio.com",
+  appId: "1:837844751991:web:71a2237085b254d9a81872",
+  apiKey: "AIzaSyBNNgnlmFjeiOE__Gd7FPvdDYtM--mz0aY",
+  storageBucket: "povs-xyz.firebasestorage.app",
+  authDomain: "povs-xyz.firebaseapp.com",
+  messagingSenderId: "837844751991",
+  projectId: "povs-xyz",
 };
 
 let app;
 if (!getApps().length) {
-  app = initializeApp(firebaseConfig);
+  app = initializeApp(DATABASE_CONFIG);
 } else {
   app = getApps()[0];
 }
