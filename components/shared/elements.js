@@ -4,6 +4,7 @@ import { useRef, useState, useMemo, useCallback, memo } from "react";
 import { useClickOutside } from "@/hooks/use-click-outside";
 import { CN, GET_NEXT_ROUNDED_LEVEL } from "@/lib/utils";
 import Icon from "@/components/icon";
+import { LoadingSpinner } from "@/components/shared/loadings";
 
 // ============================================================================
 // CONSTANTS
@@ -103,6 +104,24 @@ const IconWrapper = memo(
       onError?.();
     }, [onError]);
 
+    if (loading) {
+      return (
+        <div
+          className={CN(
+            COMPONENT_STYLES.iconContainer,
+            rounded && `rounded-${rounded}`,
+            className,
+          )}
+        >
+          {icon ? (
+            <Icon className="animate-spin" color={color} icon={icon} />
+          ) : (
+            <LoadingSpinner />
+          )}
+        </div>
+      );
+    }
+
     if (isImageUrl(icon)) {
       return (
         <img
@@ -126,13 +145,7 @@ const IconWrapper = memo(
           className,
         )}
       >
-        {icon && (
-          <Icon
-            className={loading ? "animate-spin" : ""}
-            color={color}
-            icon={icon}
-          />
-        )}
+        {icon && <Icon color={color} icon={icon} />}
       </div>
     );
   },
@@ -145,8 +158,10 @@ const IconWrapper = memo(
 export const Button = memo(
   ({
     rounded = "primary",
-    colorful = false,
+    tinted = false,
     loading = false,
+    loadingText,
+    loadingIcon,
     size = "md",
     description,
     className,
@@ -158,18 +173,32 @@ export const Button = memo(
   }) => {
     const iconRounded = GET_NEXT_ROUNDED_LEVEL(rounded);
     const sizeConfig = SIZE_CONFIGURATIONS[size];
-    const isIconOnly = Boolean(icon && !text);
+
+    const displayIcon = loading
+      ? loadingIcon !== undefined
+        ? loadingIcon
+        : icon
+      : icon;
+    const displayText = loading
+      ? loadingText !== undefined
+        ? loadingText
+        : text
+      : text;
+
+    const isIconOnly =
+      Boolean(displayIcon && !displayText) || (loading && !displayText);
 
     const buttonSize = isIconOnly
       ? sizeConfig.button.iconOnly
       : sizeConfig.button.withText;
 
     const baseClasses = CN(
-      colorful && "hover:bg-primary hover:text-white dark:hover:text-white",
+      tinted && "hover:bg-primary hover:text-white dark:hover:text-white",
       rounded && `rounded-${rounded}`,
       COMPONENT_STYLES.base,
       buttonSize,
       className,
+      loading && "cursor-wait opacity-80",
     );
 
     const handleClick = useCallback(
@@ -195,7 +224,7 @@ export const Button = memo(
             rounded={iconRounded}
             loading={loading}
             color={color}
-            icon={icon}
+            icon={displayIcon}
           />
         </button>
       );
@@ -204,29 +233,31 @@ export const Button = memo(
     return (
       <button
         className={baseClasses}
-        aria-label={text || description}
+        aria-label={displayText || description}
         onClick={handleClick}
         type="button"
         disabled={loading}
         {...props}
       >
-        {icon && (
+        {(displayIcon || (loading && !displayText)) && (
           <IconWrapper
             className={CN(
-              !colorful && "group-hover:bg-primary group-hover:text-white",
+              !tinted && "group-hover:bg-primary group-hover:text-white",
               "center h-full shrink-0 transition",
               sizeConfig.icon,
             )}
             rounded={iconRounded}
             loading={loading}
             color={color}
-            icon={icon}
+            icon={displayIcon}
           />
         )}
-        {text && (
+        {displayText && (
           <div className="flex flex-col items-start -space-y-0.5 px-3">
-            <span className={CN(sizeConfig.text, "text-current")}>{text}</span>
-            {description && (
+            <span className={CN(sizeConfig.text, "text-current")}>
+              {displayText}
+            </span>
+            {description && !loading && (
               <span className="text-xs opacity-75 text-current">
                 {description}
               </span>
@@ -501,12 +532,12 @@ export const Selectbox = memo(
 
 export const Input = memo(
   ({
+    rounded = "primary",
     type = "text",
     placeholder,
     size = "md",
     className,
     onChange,
-    rounded,
     label,
     value,
     error,
@@ -525,7 +556,7 @@ export const Input = memo(
         )}
         <div
           className={CN(
-            "group flex items-center w-full rounded-primary border transition focus-within:border-primary",
+            "group flex items-center w-full border transition focus-within:border-primary",
             error ? "border-error" : "border-base/10",
             "bg-white/60 dark:bg-black/40",
             rounded && `rounded-${rounded}`,

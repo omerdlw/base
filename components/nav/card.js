@@ -7,6 +7,7 @@ import { useModal } from "@/contexts/modal-context";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import Icon from "../icon";
+import SearchAction from "./actions/search-action";
 
 export default function Card({
   onActionHeightChange,
@@ -29,8 +30,8 @@ export default function Card({
   const pathname = usePathname();
 
   const ActionComponent = useMemo(() => {
-    if (pathname === "/" && link.name === "home") {
-      return null;
+    if (pathname === "/" && link.name === "home page") {
+      return <SearchAction placeholder="search" />;
     }
 
     return null;
@@ -116,15 +117,15 @@ export default function Card({
     >
       {isTop && (
         <button
-          className="absolute top-2/4 -translate-y-2/4 right-3 center cursor-pointer bg-transparent hover:bg-primary hover:text-white p-2 rounded-secondary"
+          className="absolute top-2 right-2 center cursor-pointer bg-transparent hover:bg-primary hover:text-white p-1 rounded-secondary z-10"
           onClick={() => openModal("SETTINGS_MODAL")}
         >
-          <Icon icon={"solar:settings-bold"} size={20} />
+          <Icon icon={"solar:settings-bold"} size={16} />
         </button>
       )}
       <div className="flex items-center h-auto space-x-3">
         <Badge isStackHovered={isStackHovered} icon={link.icon} />
-        <div className="flex-1 flex flex-col -space-y-0.5 overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden">
           <Title text={link.name} />
           <Description
             text={
