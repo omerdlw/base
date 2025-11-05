@@ -1,0 +1,66 @@
+"use client";
+
+import { useToastContext } from "@/contexts/toast-context";
+import { AnimatePresence, motion } from "framer-motion";
+import { Z_INDEX } from "@/config/constants";
+import Item from "./item";
+
+const MAX_VISIBLE_TOASTS = 3;
+const TOAST_OFFSET_Y = 10;
+const TOAST_SCALE_OFFSET = 0.05;
+const TOAST_WIDTH = 320;
+
+export default function ToastContainer() {
+  const { toasts, removeToast } = useToastContext();
+
+  const visibleToasts = toasts.slice(0, MAX_VISIBLE_TOASTS);
+
+  return (
+    <div
+      className="fixed bottom-20 left-1/2 -translate-x-1/2"
+      style={{
+        zIndex: Z_INDEX.MODAL + 100,
+        width: `${TOAST_WIDTH}px`,
+        perspective: "1000px",
+      }}
+    >
+      <AnimatePresence>
+        {visibleToasts.reverse().map((toast, index) => {
+          const total = visibleToasts.length;
+          const y = (index - (total - 1)) * TOAST_OFFSET_Y;
+          const scale = 1 - (total - 1 - index) * TOAST_SCALE_OFFSET;
+          const zIndex = 100 + index;
+
+          return (
+            <motion.div
+              key={toast.id}
+              className="absolute top-0 left-0 w-full"
+              style={{
+                zIndex: zIndex,
+              }}
+              initial={{ opacity: 0, y: -50, scale: 0.9 }}
+              animate={{
+                opacity: 1,
+                y: y,
+                scale: scale,
+              }}
+              exit={{
+                opacity: 0,
+                y: y - 20,
+                scale: scale * 0.95,
+                transition: { duration: 0.2 },
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20,
+              }}
+            >
+              <Item toast={toast} onClose={() => removeToast(toast.id)} />
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
+    </div>
+  );
+}
