@@ -3,7 +3,7 @@
 import Icon from "@/components/icon";
 import { CN } from "@/lib/utils";
 
-export default function LoadingScreen({
+export function LoadingScreen({
   icon = "mingcute:loading-3-fill",
   fullScreen = false,
   size = 40,

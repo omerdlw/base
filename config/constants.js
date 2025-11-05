@@ -12,7 +12,7 @@ export const NAV_ANIMATION_CONFIG = {
     scale: 1,
   },
   collapsed: {
-    offsetY: -10,
+    offsetY: -11,
     scale: 0.9,
   },
   transition: {

@@ -3,11 +3,13 @@ import { SettingsProvider } from "@/contexts/settings-context";
 import { ModalProvider } from "@/contexts/modal-context";
 import React from "react";
 import { ControlsProvider } from "@/contexts/controls-context";
+import { ToastProvider } from "@/contexts/toast-context";
 
 const providers = [
   NavigationProvider,
   ControlsProvider,
   SettingsProvider,
+  ToastProvider,
   ModalProvider,
 ];
 

@@ -1,6 +1,10 @@
+"use client";
+
 import { useSettings } from "@/contexts/settings-context";
 import Icon from "@/components/icon";
 import { CN } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect, useRef } from "react";
 
 const THEME_OPTIONS = [
   { value: "light", icon: <Icon icon={"solar:sun-2-bold"} /> },
@@ -13,10 +17,11 @@ const THEME_OPTIONS = [
 
 export default function SettingsModal() {
   const { theme, setTheme } = useSettings();
+  const toast = useToast();
 
   return (
     <div className="w-full flex items-center gap-4 p-3">
-      {THEME_OPTIONS.map(({ value, label, icon }) => (
+      {THEME_OPTIONS.map(({ value, icon }) => (
         <button
           className={CN(
             "py-5 px-8 rounded-secondary bg-base/5 hover:bg-transparent border border-transparent hover:border-black/10 dark:hover:border-white/10 cursor-pointer transition",
@@ -24,7 +29,11 @@ export default function SettingsModal() {
           )}
           onClick={(e) => {
             e.stopPropagation();
-            setTheme(value);
+            if (theme !== value) {
+              // Sadece farklı bir tema seçilirse
+              setTheme(value);
+              toast.success("Theme changed successfully!");
+            }
           }}
           aria-pressed={theme === value}
           type="button"

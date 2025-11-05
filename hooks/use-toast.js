@@ -1,11 +1,7 @@
-import { useModal } from "@/contexts/modal-context";
+import { useToastContext } from "@/contexts/toast-context";
 
-const useToast = () => {
-  const { openModal } = useModal();
-
-  const showToast = (message, type = "INFO", duration = 3000) => {
-    openModal("TOAST_MODAL", { message, type, duration }, "top");
-  };
+export function useToast() {
+  const { showToast } = useToastContext();
 
   const toast = {
     success: (message, duration) => showToast(message, "SUCCESS", duration),
@@ -15,6 +11,4 @@ const useToast = () => {
   };
 
   return toast;
-};
-
-export default useToast;
+}
