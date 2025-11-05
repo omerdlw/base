@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 
 const NavigationContext = createContext(undefined);
 
@@ -9,16 +15,18 @@ export function NavigationProvider({ children }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [expanded, setExpanded] = useState(false);
 
+
+
   const value = useMemo(
     () => ({
-      setDynamicNavItem,
       dynamicNavItem,
+      setDynamicNavItem,
       setSearchQuery,
       setExpanded,
       searchQuery,
       expanded,
     }),
-    [dynamicNavItem, expanded, searchQuery],
+    [dynamicNavItem, expanded, searchQuery, setDynamicNavItem]
   );
 
   return (
@@ -32,7 +40,7 @@ export function useNavigationContext() {
   const context = useContext(NavigationContext);
   if (context === undefined) {
     throw new Error(
-      "useNavigationContext must be used within a NavigationProvider",
+      "useNavigationContext must be used within a NavigationProvider"
     );
   }
   return context;

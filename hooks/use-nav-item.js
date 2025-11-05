@@ -3,10 +3,11 @@ export function createNavItem(type, data) {
     case "skeleton": {
       return {
         description: "please wait",
+        title: "Loading",
         name: "loading",
         href: "loading",
         skeleton: true,
-        icon: "...",
+        icon: "solar:loading-bold",
       };
     }
     default:

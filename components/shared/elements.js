@@ -11,8 +11,8 @@ import { LoadingSpinner } from "@/components/shared/loadings";
 // ============================================================================
 
 const COMPONENT_STYLES = {
-  base: "center cursor-pointer group rounded-primary bg-white/60 dark:bg-black/40 border border-base/10 hover:border-primary p-1 transition",
-  iconContainer: "center w-full h-full",
+  base: "center cursor-pointer group bg-white/60 dark:bg-black/40 border border-base/10 hover:border-primary p-1 transition",
+  iconContainer: "center w-full h-full bg-base/5",
 };
 
 const SIZE_CONFIGURATIONS = {
@@ -157,7 +157,7 @@ const IconWrapper = memo(
 
 export const Button = memo(
   ({
-    rounded = "primary",
+    rounded = "secondary",
     tinted = false,
     loading = false,
     loadingText,
@@ -285,6 +285,7 @@ const SelectboxMenu = memo(
     rounded,
   }) => {
     const showSearch = totalOptions > CONFIG.menu.searchThreshold;
+    const nextRounded = GET_NEXT_ROUNDED_LEVEL(rounded);
 
     const handleSearchChange = useCallback(
       (e) => {
@@ -329,7 +330,10 @@ const SelectboxMenu = memo(
           ) : (
             options.map((option) => (
               <div
-                className="p-2.5 text-sm hover:bg-base/10 cursor-pointer rounded-secondary transition-colors"
+                className={CN(
+                  "p-2.5 text-sm hover:bg-base/10 cursor-pointer transition-colors",
+                  `rounded-${nextRounded}`,
+                )}
                 onClick={(e) => {
                   e.stopPropagation();
                   onSelect(option);
@@ -370,8 +374,8 @@ const SelectboxValue = memo(
             className={CN(
               isOpen
                 ? "bg-primary text-white"
-                : "group-hover:bg-primary group-hover:text-white",
-              "center h-full shrink-0 bg-base/5 transition",
+                : "group-hover:bg-primary group-hover:text-white bg-base/5",
+              "center h-full shrink-0 transition",
               iconClassName,
             )}
             rounded={iconRounded}
@@ -451,6 +455,7 @@ const useSelectbox = (options, onChange) => {
 
 export const Selectbox = memo(
   ({
+    rounded = "secondary",
     direction = "bottom",
     loading = false,
     options = [],
@@ -459,7 +464,6 @@ export const Selectbox = memo(
     className,
     menuWidth,
     onChange,
-    rounded,
     color,
     text,
     icon,

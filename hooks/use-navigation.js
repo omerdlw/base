@@ -1,15 +1,7 @@
 import { useNavigationContext } from "@/contexts/navigation-context";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { NAVIGATION_LINKS } from "@/config/constants";
-import { createNavItem } from "./use-nav-item";
-
-const SKELETON_ITEM = createNavItem("skeleton");
-
-const baseLinks = NAVIGATION_LINKS.reduce((acc, link) => {
-  acc[link.name] = link;
-  return acc;
-}, {});
+import { navConfigs } from "@/config/nav-configs";
 
 export const useNavigation = () => {
   const { dynamicNavItem, expanded, setExpanded } = useNavigationContext();
@@ -17,47 +9,46 @@ export const useNavigation = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const showSkeleton = dynamicNavItem;
-
   const handleNavigate = useCallback(
     (href) => {
       router.push(href);
       setExpanded(false);
     },
-    [router, setExpanded]
+    [router, setExpanded],
   );
 
+  const navigationItems = useMemo(() => {
+    const items = Object.values(navConfigs);
+    if (!dynamicNavItem) {
+      return items;
+    }
+    const index = items.findIndex((item) => item.path === dynamicNavItem.path);
+    if (index !== -1) {
+      return [
+        ...items.slice(0, index),
+        dynamicNavItem,
+        ...items.slice(index + 1),
+      ];
+    } else {
+      return [dynamicNavItem, ...items];
+    }
+  }, [dynamicNavItem]);
+
   useEffect(() => {
-    NAVIGATION_LINKS.forEach((link) => router.prefetch(link.href));
-  }, [router]);
+    navigationItems.forEach((link) => router.prefetch(link.path));
+  }, [router, navigationItems]);
 
   useEffect(() => {
     setExpanded(false);
   }, [pathname, setExpanded]);
 
-  const navigationItems = useMemo(() => {
-    const { home } = baseLinks;
-
-    if (showSkeleton) {
-      return [SKELETON_ITEM, home].filter(Boolean);
-    }
-
-    if (dynamicNavItem) {
-      return;
-    }
-
-    return NAVIGATION_LINKS;
-  }, [dynamicNavItem, showSkeleton]);
-
   const activeIndex = useMemo(() => {
-    if (showSkeleton) return 0;
-
     const currentPath = pathname;
     const index = navigationItems.findIndex(
-      (item) => item.href === currentPath
+      (item) => item.path === currentPath,
     );
     return Math.max(0, index);
-  }, [pathname, navigationItems, showSkeleton]);
+  }, [pathname, navigationItems]);
 
   const activeItem = navigationItems[activeIndex];
 
@@ -68,14 +59,13 @@ export const useNavigation = () => {
     return activeItem ? [activeItem] : [];
   }, [pathname, expanded, isHovered, navigationItems, activeItem]);
 
-  const activeItemHasAction = useMemo(() => ["/"].includes(activeItem?.href));
+  const activeItemHasAction = useMemo(() => !!activeItem?.action, [activeItem]);
 
   return {
     navigationItems: displayItems,
     navigate: handleNavigate,
     activeItemHasAction,
     setIsHovered,
-    showSkeleton,
     setExpanded,
     activeIndex,
     expanded,

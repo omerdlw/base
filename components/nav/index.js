@@ -2,17 +2,16 @@
 
 import { MotionConfig, motion, AnimatePresence } from "framer-motion";
 import { useClickOutside } from "@/hooks/use-click-outside";
-import { useNavigation } from "../../hooks/use-navigation";
 import { NAV_ANIMATION_CONFIG } from "@/config/constants";
 import { useState, useRef, useEffect } from "react";
 import classNames from "classnames";
-import Card from "./card";
+import Item from "./item";
+import { useNavigation } from "@/hooks/use-navigation";
 
 export default function Nav() {
   const {
     activeItemHasAction,
     navigationItems,
-    showSkeleton,
     setIsHovered,
     setExpanded,
     activeIndex,
@@ -53,12 +52,7 @@ export default function Nav() {
         )}
       </AnimatePresence>
       <div
-        className={classNames(
-          "fixed bottom-4 left-1/2 -translate-x-2/4 w-[300px] mx-auto z-50 select-none",
-          {
-            "w-[400px]": showSkeleton,
-          },
-        )}
+        className="fixed bottom-4 left-1/2 -translate-x-2/4 w-[300px] mx-auto z-50 select-none"
         id="nav-card-stack"
         ref={navRef}
       >
@@ -77,12 +71,9 @@ export default function Nav() {
               const isTop = position === 0;
 
               return (
-                <Card
+                <Item
                   onClick={() =>
-                    !link.skeleton &&
-                    (expanded
-                      ? navigate(link.href)
-                      : isTop && setExpanded(true))
+                    expanded ? navigate(link.path) : isTop && setExpanded(true)
                   }
                   onActionHeightChange={isTop ? setActionHeight : null}
                   onMouseEnter={() => {
@@ -99,7 +90,7 @@ export default function Nav() {
                   }}
                   expanded={expanded}
                   position={position}
-                  key={link.href}
+                  key={link.path}
                   isTop={isTop}
                   link={link}
                   isStackHovered={isStackHovered}

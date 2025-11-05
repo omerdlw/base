@@ -30,9 +30,9 @@
 }
 
 @theme {
-    --radius-primary: 10px;
-    --radius-secondary: 6px;
-    --radius-tertiary: 4px;
+    --radius-primary: 30px;
+    --radius-secondary: 20px;
+    --radius-tertiary: 16px;
 }
 
 * {

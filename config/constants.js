@@ -6,15 +6,6 @@ export const ROUTES = {
   HOME: "/",
 };
 
-export const NAVIGATION_LINKS = [
-  {
-    icon: "solar:home-angle-2-bold",
-    description: "base client",
-    name: "home page",
-    href: "/",
-  },
-];
-
 export const NAV_ANIMATION_CONFIG = {
   expanded: {
     offsetY: -85,
