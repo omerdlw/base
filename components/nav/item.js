@@ -13,6 +13,7 @@ export default function Item({
   isStackHovered,
   onMouseEnter,
   onMouseLeave,
+  totalItems, // YENİ: Toplam item sayısı
   position,
   expanded,
   onClick,
@@ -46,16 +47,49 @@ export default function Item({
     }
   }, [isTop, ActionComponent, actionSize.height, onActionHeightChange]);
 
+  // YENİ: Rounded class'larını belirle
+  const getRoundedClass = () => {
+    if (!expanded) {
+      return "rounded-primary"; // Collapsed durumunda hepsi tam rounded
+    }
+
+    // Expanded durumunda - pozisyon 0 en altta, son pozisyon en üstte
+    if (position === totalItems - 1) {
+      // En ÜSTTEKİ görünen kart - sadece üst tarafı rounded
+      return "rounded-t-primary";
+    } else if (position === 0) {
+      // En ALTTAKİ görünen kart - sadece alt tarafı rounded
+      return "rounded-b-primary";
+    }
+
+    // Ortadaki kartlar - rounded yok
+    return "";
+  };
+
+  // YENİ: Border class'larını belirle
+  const getBorderClass = () => {
+    if (!expanded) {
+      return "border-2"; // Collapsed durumunda normal border
+    }
+
+    // Expanded durumunda - pozisyon 0 (en alt) hariç hepsine üst border
+    if (position >= 0) {
+      return "border-2";
+    }
+
+    return "";
+  };
+
   return (
     <motion.div
-      className={`absolute left-1/2 -translate-x-1/2 w-full h-auto cursor-pointer rounded-primary bg-white/60 dark:bg-black/40 backdrop-blur-lg border-2 p-3 transition transform-gpu will-change-transform ${
+      className={`absolute left-1/2 -translate-x-1/2 w-full h-auto cursor-pointer bg-white/60 dark:bg-black/40 backdrop-blur-lg p-3 transition transform-gpu will-change-transform ${getRoundedClass()} ${
         expanded
           ? isIndividualHovered
-            ? "border-primary"
-            : "border-base/10"
+            ? getBorderClass() + " border-primary"
+            : getBorderClass() + " border-base/10"
           : isStackHovered
-            ? "border-primary"
-            : "border-base/10"
+            ? "border-2 border-primary"
+            : "border-2 border-base/10"
       }`}
       animate={{
         y: expanded ? position * expandedOffsetY : position * collapsedOffsetY,
@@ -82,12 +116,12 @@ export default function Item({
       onMouseEnter={() => {
         setIsIndividualHovered(true);
         setIsHovered(true);
-        onMouseEnter?.();
+        if (!expanded) onMouseEnter?.();
       }}
       onMouseLeave={() => {
         setIsIndividualHovered(false);
         setIsHovered(false);
-        onMouseLeave?.();
+        if (!expanded) onMouseLeave?.();
       }}
       onClick={onClick}
       layout
@@ -97,7 +131,12 @@ export default function Item({
           className="absolute top-2 right-2 center cursor-pointer bg-transparent hover:bg-primary hover:text-white p-1 rounded-secondary z-10"
           onClick={(event) => {
             event.stopPropagation();
-            openModal("SETTINGS_MODAL");
+            openModal("SETTINGS_MODAL", "center", {
+              header: {
+                title: "Settings",
+                description: "Configure your preferences",
+              },
+            });
           }}
         >
           <Icon icon={"solar:settings-bold"} size={16} />

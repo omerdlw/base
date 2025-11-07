@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState, useMemo, useCallback, memo } from "react";
-import { useClickOutside } from "@/hooks/use-click-outside";
+import { useRef, useState, useMemo, useCallback, memo, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { CN, GET_NEXT_ROUNDED_LEVEL } from "@/lib/utils";
 import Icon from "@/components/icon";
 import { LoadingSpinner } from "@/components/shared/loadings";
@@ -11,8 +11,12 @@ import { LoadingSpinner } from "@/components/shared/loadings";
 // ============================================================================
 
 const COMPONENT_STYLES = {
-  base: "center cursor-pointer group bg-white/60 dark:bg-black/40 border border-base/10 hover:border-primary p-1 transition",
+  base: "center relative cursor-pointer group bg-white/60 dark:bg-black/40 border border-base/10 hover:border-primary p-1 transition",
   iconContainer: "center w-full h-full bg-base/5",
+  blur: {
+    enabled: "backdrop-blur-xl",
+    disabled: "",
+  },
 };
 
 const SIZE_CONFIGURATIONS = {
@@ -24,7 +28,7 @@ const SIZE_CONFIGURATIONS = {
   md: {
     button: { iconOnly: "size-[55px]", withText: "h-[55px]" },
     icon: "w-[45px]",
-    text: "text-base",
+    text: "text-[15px]",
   },
   lg: {
     button: { iconOnly: "size-[65px]", withText: "h-[65px]" },
@@ -36,18 +40,11 @@ const SIZE_CONFIGURATIONS = {
 const CONFIG = {
   menu: {
     maxHeight: "max-h-[200px]",
-    searchThreshold: 12,
+    searchThreshold: 8,
   },
   fallback: {
     image: "/placeholder.svg",
   },
-};
-
-const SELECTBOX_POSITION_CLASSES = {
-  bottom: "top-full mt-2",
-  top: "bottom-full mb-2",
-  left: "right-full mr-2",
-  right: "left-full ml-2",
 };
 
 const TOOLTIP_POSITION_CLASSES = {
@@ -89,6 +86,44 @@ const filterOptions = (options, query) => {
   return options.filter((option) =>
     option.label.toLowerCase().includes(lowerQuery),
   );
+};
+
+const calculateMenuPosition = (
+  triggerRect,
+  menuRect,
+  direction,
+  menuWidth,
+  margin = 8,
+) => {
+  let top = triggerRect.bottom;
+  let left = triggerRect.left;
+
+  switch (direction) {
+    case "top":
+      top = menuRect
+        ? triggerRect.top - menuRect.height - margin
+        : triggerRect.top - 200;
+      break;
+    case "bottom":
+      top = triggerRect.bottom + margin;
+      break;
+    case "left":
+      left = menuRect
+        ? triggerRect.left - menuRect.width - margin
+        : triggerRect.left - (menuWidth || triggerRect.width) - margin;
+      top = triggerRect.top;
+      break;
+    case "right":
+      left = triggerRect.right + margin;
+      top = triggerRect.top;
+      break;
+  }
+
+  return {
+    top: top + window.scrollY,
+    left: left + window.scrollX,
+    width: menuWidth || triggerRect.width,
+  };
 };
 
 // ============================================================================
@@ -158,8 +193,9 @@ const IconWrapper = memo(
 export const Button = memo(
   ({
     rounded = "secondary",
-    tinted = false,
     loading = false,
+    blurry = false,
+    tinted = false,
     loadingText,
     loadingIcon,
     size = "md",
@@ -174,16 +210,8 @@ export const Button = memo(
     const iconRounded = GET_NEXT_ROUNDED_LEVEL(rounded);
     const sizeConfig = SIZE_CONFIGURATIONS[size];
 
-    const displayIcon = loading
-      ? loadingIcon !== undefined
-        ? loadingIcon
-        : icon
-      : icon;
-    const displayText = loading
-      ? loadingText !== undefined
-        ? loadingText
-        : text
-      : text;
+    const displayIcon = loading ? (loadingIcon ?? icon) : icon;
+    const displayText = loading ? (loadingText ?? text) : text;
 
     const isIconOnly =
       Boolean(displayIcon && !displayText) || (loading && !displayText);
@@ -193,12 +221,13 @@ export const Button = memo(
       : sizeConfig.button.withText;
 
     const baseClasses = CN(
+      blurry ? COMPONENT_STYLES.blur.enabled : COMPONENT_STYLES.blur.disabled,
       tinted && "hover:bg-primary hover:text-white dark:hover:text-white",
       rounded && `rounded-${rounded}`,
       COMPONENT_STYLES.base,
       buttonSize,
       className,
-      loading && "cursor-wait opacity-80",
+      loading && "cursor-wait opacity-75",
     );
 
     const handleClick = useCallback(
@@ -254,7 +283,13 @@ export const Button = memo(
         )}
         {displayText && (
           <div className="flex flex-col items-start -space-y-0.5 px-3">
-            <span className={CN(sizeConfig.text, "text-current")}>
+            <span
+              className={CN(
+                description && "font-semibold",
+                sizeConfig.text,
+                "text-current",
+              )}
+            >
               {displayText}
             </span>
             {description && !loading && (
@@ -283,9 +318,15 @@ const SelectboxMenu = memo(
     onSelect,
     options,
     rounded,
+    triggerRef,
+    menuRef: externalMenuRef,
+    blurry,
   }) => {
-    const showSearch = totalOptions > CONFIG.menu.searchThreshold;
+    const showSearch = totalOptions >= CONFIG.menu.searchThreshold;
     const nextRounded = GET_NEXT_ROUNDED_LEVEL(rounded);
+    const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+    const internalMenuRef = useRef(null);
+    const menuRef = externalMenuRef || internalMenuRef;
 
     const handleSearchChange = useCallback(
       (e) => {
@@ -294,49 +335,147 @@ const SelectboxMenu = memo(
       [onSearchChange],
     );
 
-    return (
+    useEffect(() => {
+      if (!triggerRef?.current) return;
+
+      const updatePosition = () => {
+        if (!triggerRef?.current) return;
+        const triggerRect = triggerRef.current.getBoundingClientRect();
+        const menuRect = menuRef.current?.getBoundingClientRect();
+        const newPosition = calculateMenuPosition(
+          triggerRect,
+          menuRect,
+          direction,
+          menuWidth,
+        );
+        setPosition(newPosition);
+      };
+
+      updatePosition();
+
+      const timeoutId = setTimeout(updatePosition, 0);
+
+      window.addEventListener("scroll", updatePosition, true);
+      window.addEventListener("resize", updatePosition);
+
+      return () => {
+        clearTimeout(timeoutId);
+        window.removeEventListener("scroll", updatePosition, true);
+        window.removeEventListener("resize", updatePosition);
+      };
+    }, [triggerRef, direction, menuWidth, options]);
+
+    // Rounded class'larını dinamik olarak belirle
+    const getOptionRoundedClass = (index, totalCount) => {
+      const roundedClasses = {
+        primary: {
+          full: "rounded-primary",
+          top: "rounded-t-primary",
+          bottom: "rounded-b-primary",
+        },
+        secondary: {
+          full: "rounded-secondary",
+          top: "rounded-t-secondary",
+          bottom: "rounded-b-secondary",
+        },
+        tertiary: {
+          full: "rounded-tertiary",
+          top: "rounded-t-tertiary",
+          bottom: "rounded-b-tertiary",
+        },
+      };
+
+      const classes = roundedClasses[nextRounded] || roundedClasses.secondary;
+
+      if (totalCount === 1) {
+        return classes.full;
+      }
+
+      if (index === 0 && !showSearch) {
+        return classes.top;
+      }
+
+      if (index === totalCount - 1) {
+        return classes.bottom;
+      }
+
+      return "";
+    };
+
+    const menuContent = (
       <div
+        ref={menuRef}
         className={CN(
-          "absolute rounded-primary p-1 backdrop-blur-lg bg-white/60 dark:bg-black/40 border border-base/10 z-50",
-          SELECTBOX_POSITION_CLASSES[direction],
+          "absolute top-0 overflow-hidden p-1 backdrop-blur-xl bg-white/60 dark:bg-black/40 border border-base/10",
           rounded && `rounded-${rounded}`,
-          menuWidth || "w-full",
+          "z-100",
+          blurry
+            ? COMPONENT_STYLES.blur.enabled
+            : COMPONENT_STYLES.blur.disabled,
         )}
+        style={{
+          top: `${position.top}px`,
+          left: `${position.left}px`,
+          width: position.width ? `${position.width}px` : "auto",
+        }}
         role="listbox"
       >
         {showSearch && (
           <div onClick={(e) => e.stopPropagation()}>
             <Input
               onChange={handleSearchChange}
-              className="rounded-secondary"
-              placeholder="Search"
+              placeholder="Search in options"
               value={searchQuery}
-              rounded="secondary"
+              noBorder
               type="text"
               size="sm"
+              className={CN(
+                "[&>div]:rounded-b-none",
+                nextRounded === "primary" && "[&>div]:rounded-t-primary",
+                nextRounded === "secondary" && "[&>div]:rounded-t-secondary",
+                nextRounded === "tertiary" && "[&>div]:rounded-t-tertiary",
+              )}
             />
           </div>
         )}
         <div
           className={CN(
-            CONFIG.menu.maxHeight + " overflow-y-auto",
-            showSearch && "mt-1",
+            CONFIG.menu.maxHeight +
+              " overflow-x-hidden overflow-y-auto space-y-0.5",
+            rounded && `rounded-b-${nextRounded}`,
+            showSearch && "mt-0.5",
           )}
         >
           {options.length === 0 ? (
-            <div className="p-2.5 text-sm text-center opacity-50">
-              No options found
+            <div
+              className={CN(
+                "p-2.5 text-center bg-base/5 hover:bg-white/60 dark:hover:bg-black/40",
+                showSearch
+                  ? nextRounded === "primary"
+                    ? "rounded-b-primary"
+                    : nextRounded === "secondary"
+                      ? "rounded-b-secondary"
+                      : "rounded-b-tertiary"
+                  : nextRounded === "primary"
+                    ? "rounded-primary"
+                    : nextRounded === "secondary"
+                      ? "rounded-secondary"
+                      : "rounded-tertiary",
+              )}
+            >
+              <span className="opacity-75 text-sm">No options found</span>
             </div>
           ) : (
-            options.map((option) => (
+            options.map((option, index) => (
               <div
                 className={CN(
-                  "p-2.5 text-sm hover:bg-base/10 cursor-pointer transition-colors",
-                  `rounded-${nextRounded}`,
+                  "p-2.5 text-sm cursor-pointer transition-colors bg-base/5 hover:bg-white/60 dark:hover:bg-black/40",
+                  getOptionRoundedClass(index, options.length),
                 )}
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
-                  onSelect(option);
+                  onSelect?.(option);
                 }}
                 key={option.value}
                 role="option"
@@ -349,6 +488,10 @@ const SelectboxMenu = memo(
         </div>
       </div>
     );
+
+    if (typeof window === "undefined") return null;
+
+    return createPortal(menuContent, document.body);
   },
 );
 
@@ -388,13 +531,14 @@ const SelectboxValue = memo(
           <div
             className={CN(
               "w-full bg-transparent outline-none appearance-none",
+              description && "font-semibold",
               textClassName,
             )}
           >
             {selectedOption?.label || text || "Select an option"}
           </div>
           {description && (
-            <span className="text-xs opacity-70">{description}</span>
+            <span className="text-xs opacity-75">{description}</span>
           )}
         </div>
       </>
@@ -406,31 +550,70 @@ const SelectboxValue = memo(
 // CUSTOM HOOK FOR SELECTBOX
 // ============================================================================
 
-const useSelectbox = (options, onChange) => {
-  const [selectedOption, setSelectedOption] = useState(options[0] || null);
+const useSelectbox = (options, onChange, value) => {
+  const [selectedOption, setSelectedOption] = useState(() => {
+    if (value !== undefined) {
+      return options.find((opt) => opt.value === value) || options[0] || null;
+    }
+    return options[0] || null;
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
+  const menuRef = useRef(null);
 
-  useClickOutside(selectRef, () => {
-    setIsOpen(false);
-    setSearchQuery("");
-  });
+  useEffect(() => {
+    if (value !== undefined) {
+      const foundOption = options.find((opt) => opt.value === value);
+      if (foundOption) {
+        setSelectedOption((prev) =>
+          prev?.value !== foundOption.value ? foundOption : prev,
+        );
+      }
+    }
+  }, [value, options]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event) => {
+      const isClickInsideSelect = selectRef.current?.contains(event.target);
+      const isClickInsideMenu = menuRef.current?.contains(event.target);
+
+      if (!isClickInsideSelect && !isClickInsideMenu) {
+        setIsOpen(false);
+        setSearchQuery("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isOpen]);
 
   const handleSelect = useCallback(
     (option) => {
-      setSelectedOption(option);
+      if (value === undefined) {
+        setSelectedOption(option);
+      }
       setIsOpen(false);
       setSearchQuery("");
       onChange?.(option);
     },
-    [onChange],
+    [onChange, value],
   );
 
-  const toggleMenu = useCallback((e) => {
-    e.stopPropagation();
-    setIsOpen((prev) => !prev);
-  }, []);
+  const toggleMenu = useCallback(
+    (e) => {
+      e.stopPropagation();
+      setIsOpen((prev) => {
+        if (prev) {
+          setSearchQuery("");
+        }
+        return !prev;
+      });
+    },
+    [setSearchQuery],
+  );
 
   const filteredOptions = useMemo(
     () => filterOptions(options, searchQuery),
@@ -446,6 +629,7 @@ const useSelectbox = (options, onChange) => {
     toggleMenu,
     setSearchQuery,
     selectRef,
+    menuRef,
   };
 };
 
@@ -456,17 +640,19 @@ const useSelectbox = (options, onChange) => {
 export const Selectbox = memo(
   ({
     rounded = "secondary",
-    direction = "bottom",
+    direction = "top",
     loading = false,
+    blurry = false,
     options = [],
-    size = "md",
     description,
+    size = "md",
     className,
     menuWidth,
     onChange,
     color,
     text,
     icon,
+    value,
     ...props
   }) => {
     const {
@@ -478,20 +664,24 @@ export const Selectbox = memo(
       toggleMenu,
       setSearchQuery,
       selectRef,
-    } = useSelectbox(options, onChange);
+      menuRef,
+    } = useSelectbox(options, onChange, value);
 
     const sizeConfig = SIZE_CONFIGURATIONS[size];
 
     return (
       <div
         className={CN(
+          COMPONENT_STYLES.base,
           rounded && `rounded-${rounded}`,
           sizeConfig.button.withText,
-          isOpen && "border-primary",
           "relative cursor-pointer",
           isOpen ? "z-20" : "z-10",
-          COMPONENT_STYLES.base,
+          blurry
+            ? COMPONENT_STYLES.blur.enabled
+            : COMPONENT_STYLES.blur.disabled,
           className,
+          isOpen && "border-primary",
         )}
         aria-label={text || description}
         onClick={toggleMenu}
@@ -523,6 +713,9 @@ export const Selectbox = memo(
             direction={direction}
             menuWidth={menuWidth}
             rounded={rounded}
+            triggerRef={selectRef}
+            menuRef={menuRef}
+            blurry={blurry}
           />
         )}
       </div>
@@ -536,11 +729,13 @@ export const Selectbox = memo(
 
 export const Input = memo(
   ({
-    rounded = "primary",
+    rounded = "secondary",
+    blurry = false,
     type = "text",
     placeholder,
     size = "md",
     className,
+    noBorder,
     onChange,
     label,
     value,
@@ -562,6 +757,10 @@ export const Input = memo(
           className={CN(
             "group flex items-center w-full border transition focus-within:border-primary",
             error ? "border-error" : "border-base/10",
+            noBorder && "!border-0 !border-transparent",
+            blurry
+              ? COMPONENT_STYLES.blur.enabled
+              : COMPONENT_STYLES.blur.disabled,
             "bg-white/60 dark:bg-black/40",
             rounded && `rounded-${rounded}`,
             sizeConfig.button.withText,
@@ -580,7 +779,6 @@ export const Input = memo(
               rounded={iconRounded}
             />
           )}
-
           <input
             className={CN(
               "w-full h-full bg-transparent outline-none px-3",

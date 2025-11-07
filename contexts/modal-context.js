@@ -16,18 +16,23 @@ const initialState = {
   modalType: null,
   isOpen: false,
   props: {},
+  title: null,
+  description: null,
 };
 
 export const ModalProvider = ({ children }) => {
   const [modalState, setModalState] = useState(initialState);
 
   const openModal = useCallback(
-    (modalType, props = {}, position = "center") => {
+    (modalType, position = "center", props = {}) => {
+      const { header, data, ...restProps } = props;
       setModalState({
         isOpen: true,
         modalType,
         position,
-        props,
+        props: data || restProps,
+        title: header?.title || null,
+        description: header?.description || null,
       });
     },
     [],

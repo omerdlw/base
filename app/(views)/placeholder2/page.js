@@ -1,4 +1,4 @@
-import Template from "../template";
+import Template from "@/app/(views)/template";
 
 export default function Placeholder() {
   return (

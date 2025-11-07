@@ -88,6 +88,7 @@ export default function Nav() {
                       pathname !== "/" && setIsHovered(false);
                     }
                   }}
+                  totalItems={navigationItems.length} // YENİ PROP
                   expanded={expanded}
                   position={position}
                   key={link.path}

@@ -1,9 +1,12 @@
-export const API_ENDPOINTS = {};
+export const API_ENDPOINTS = {
+  PLACEHOLDER: "https://jsonplaceholder.typicode.com/todos/1",
+};
 
 export const API_CONFIG = {};
 
 export const ROUTES = {
-  HOME: "/",
+  PAGE_1: "/placeholder",
+  PAGE_2: "/placeholder2",
 };
 
 export const NAV_ANIMATION_CONFIG = {
@@ -74,19 +77,6 @@ export const DATE_FORMATS = {
   YEAR_ONLY: {
     year: "numeric",
   },
-};
-
-export const ERROR_MESSAGES = {
-  UNAUTHORIZED: "You are not authorized to perform this action",
-  SERVER: "A server error occurred. Please try again later",
-  GENERIC: "An unexpected error occurred. Please try again",
-  NETWORK: "Network error. Please check your connection",
-  VALIDATION: "Please check your input and try again",
-  NOT_FOUND: "The requested resource was not found",
-};
-
-export const SUCCESS_MESSAGES = {
-  SETTINGS_SAVED: "Settings saved successfully",
 };
 
 export const HTTP_STATUS = {

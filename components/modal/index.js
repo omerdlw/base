@@ -6,6 +6,7 @@ import { useModal } from "@/contexts/modal-context";
 import { MODAL_COMPONENTS } from "./modals";
 import classNames from "classnames";
 import { useEffect } from "react";
+import Title from "./title";
 
 const positionClasses = {
   center: "items-center justify-center",
@@ -82,7 +83,15 @@ const getModalVariants = (position) => {
 };
 
 const Modal = () => {
-  const { isOpen, closeModal, modalType, props: data, position } = useModal();
+  const {
+    isOpen,
+    closeModal,
+    modalType,
+    props: data,
+    position,
+    title,
+    description,
+  } = useModal();
 
   useEffect(() => {
     const handleEsc = (event) => {
@@ -107,7 +116,7 @@ const Modal = () => {
       {isOpen && modalType && (
         <div
           className={classNames(
-            "fixed inset-0 flex",
+            "fixed inset-0 flex flex-col",
             positionClasses[position],
             {
               "p-4": !isSideModal,
@@ -116,7 +125,7 @@ const Modal = () => {
           style={{ zIndex: Z_INDEX.MODAL }}
         >
           <motion.div
-            className="fixed inset-0 bg-white/60 dark:bg-black/40"
+            className="fixed inset-0"
             style={{ zIndex: Z_INDEX.MODAL_BACKDROP }}
             variants={backdropVariants}
             onClick={closeModal}
@@ -124,9 +133,17 @@ const Modal = () => {
             initial="hidden"
             exit="hidden"
           />
+          {title && (
+            <Title
+              description={description}
+              position={position}
+              close={closeModal}
+              title={title}
+            />
+          )}
           <motion.div
             className={classNames(
-              "relative bg-white/40 dark:bg-black/40 backdrop-blur-xl border border-black/15 dark:border-white/15",
+              "relative flex flex-col bg-white/70 dark:bg-black/50 backdrop-blur-xl border border-base/10",
               {
                 "border-y-0 border-l-0": position === "left",
                 "border-y-0 border-r-0": position === "right",

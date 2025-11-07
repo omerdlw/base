@@ -39,11 +39,11 @@ export const Icon = ({ icon, isStackHovered }) => {
         "flex items-center justify-center size-[52px] rounded-secondary bg-base/5 transition",
         {
           "bg-primary text-white": isStackHovered,
-        },
+        }
       )}
     >
       <span className="text-2xl">
-        <Iconify icon={icon} />
+        <Iconify size={30} icon={icon} />
       </span>
     </div>
   );

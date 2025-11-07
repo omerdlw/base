@@ -17,7 +17,7 @@ export default function ToastContainer() {
 
   return (
     <div
-      className="fixed bottom-20 left-1/2 -translate-x-1/2"
+      className="fixed top-10 left-2/4 -translate-x-2/4"
       style={{
         zIndex: Z_INDEX.MODAL + 100,
         width: `${TOAST_WIDTH}px`,
@@ -25,11 +25,11 @@ export default function ToastContainer() {
       }}
     >
       <AnimatePresence>
-        {visibleToasts.reverse().map((toast, index) => {
+        {visibleToasts.map((toast, index) => {
           const total = visibleToasts.length;
-          const y = (index - (total - 1)) * TOAST_OFFSET_Y;
-          const scale = 1 - (total - 1 - index) * TOAST_SCALE_OFFSET;
-          const zIndex = 100 + index;
+          const y = index * TOAST_OFFSET_Y;
+          const scale = 1 - index * TOAST_SCALE_OFFSET;
+          const zIndex = 100 + (total - 1 - index);
 
           return (
             <motion.div
