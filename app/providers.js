@@ -6,15 +6,15 @@ import { ControlsProvider } from "@/contexts/controls-context";
 import { ToastProvider } from "@/contexts/toast-context";
 
 const providers = [
-  NavigationProvider,
-  ControlsProvider,
-  SettingsProvider,
-  ToastProvider,
-  ModalProvider,
+    NavigationProvider,
+    ControlsProvider,
+    SettingsProvider,
+    ToastProvider,
+    ModalProvider,
 ];
 
 export const AppProviders = ({ children }) => {
-  return providers.reduceRight((acc, Provider) => {
-    return <Provider>{acc}</Provider>;
-  }, children);
+    return providers.reduceRight((acc, Provider) => {
+        return <Provider>{acc}</Provider>;
+    }, children);
 };
