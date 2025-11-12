@@ -1,8 +1,8 @@
 "use client";
 
-import { useToastContext } from "@/contexts/toast-context";
 import { AnimatePresence, motion } from "framer-motion";
 import { Z_INDEX } from "@/config/constants";
+import { useToastContext } from "@/contexts/toast-context";
 import Item from "./item";
 
 const MAX_VISIBLE_TOASTS = 3;

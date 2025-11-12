@@ -1,7 +1,7 @@
 "use client";
 
-import { ANIMATION_DURATIONS, Z_INDEX } from "@/config/constants";
 import { motion } from "framer-motion";
+import { ANIMATION_DURATIONS, Z_INDEX } from "@/config/constants";
 import Icon from "../icon";
 
 const springTransition = {
@@ -71,7 +71,7 @@ export default function Title({
 }) {
     return (
         <motion.div
-            className="fixed top-0 flex items-center justify-between bg-white/70 dark:bg-black/50 backdrop-blur-xl border border-black/15 dark:border-white/15 rounded-b-primary h-auto p-6 min-w-md max-w-7xl"
+            className="fixed top-0 flex items-center justify-between bg-white/70 dark:bg-black/50 backdrop-blur-xl border border-black/15 dark:border-white/15 rounded-b-primary h-auto p-4 min-w-md max-w-7xl"
             style={{ zIndex: Z_INDEX.DROPDOWN }}
             variants={getTitleVariants(position)}
             animate="visible"
@@ -79,9 +79,9 @@ export default function Title({
             exit="exit"
         >
             <div className="flex flex-col items-start h-full">
-                <h2 className="text-lg font-semibold">{title}</h2>
+                <h2 className="font-semibold">{title}</h2>
                 {description && (
-                    <p className="text-sm opacity-75 line-clamp-1">
+                    <p className="text-xs opacity-75 line-clamp-1">
                         {description}
                     </p>
                 )}

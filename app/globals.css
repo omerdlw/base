@@ -3,55 +3,56 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-    --base: #000000;
-    --primary: #3aa7d6;
-    --success: #4ad951;
-    --error: #d43333;
-    --warning: #f7c323;
-    --info: #3aa7d6;
+  --base: #000000;
+  --primary: #3aa7d6;
+  --success: #4ad951;
+  --error: #d43333;
+  --warning: #f7c323;
+  --info: #3aa7d6;
 }
 
 .dark {
-    --base: #ffffff;
-    --primary: #3aa7d6;
-    --success: #4ad951;
-    --error: #d43333;
-    --warning: #f7c323;
-    --info: #3aa7d6;
+  --base: #ffffff;
+  --primary: #3aa7d6;
+  --success: #4ad951;
+  --error: #d43333;
+  --warning: #f7c323;
+  --info: #3aa7d6;
 }
 
 @theme {
-    --color-base: var(--base);
-    --color-primary: var(--primary);
-    --color-success: var(--success);
-    --color-error: var(--error);
-    --color-warning: var(--warning);
-    --color-info: var(--info);
+  --color-base: var(--base);
+  --color-primary: var(--primary);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
 }
 
 @theme {
-    --radius-primary: 30px;
-    --radius-secondary: 20px;
-    --radius-tertiary: 16px;
+  --radius-primary: 30px;
+  --radius-secondary: 20px;
+  --radius-tertiary: 16px;
+  --radius-quaternary: 10px;
 }
 
 * {
-    box-sizing: border-box;
-    outline: none;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  box-sizing: border-box;
+  outline: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 *::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .transition {
-    @apply transition-colors duration-200 ease-in-out;
+  @apply transition-colors duration-200 ease-in-out;
 }

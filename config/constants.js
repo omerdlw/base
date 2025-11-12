@@ -12,7 +12,7 @@ export const ROUTES = {
 
 export const NAV_ANIMATION_CONFIG = {
     expanded: {
-        offsetY: -80,
+        offsetY: -85,
         scale: 1,
     },
     collapsed: {

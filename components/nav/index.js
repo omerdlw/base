@@ -1,10 +1,10 @@
 "use client";
 
-import { MotionConfig, motion, AnimatePresence } from "framer-motion";
-import { useClickOutside } from "@/hooks/use-click-outside";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { NAV_ANIMATION_CONFIG } from "@/config/constants";
+import { useClickOutside } from "@/hooks/use-click-outside";
 import { useNavigation } from "@/hooks/use-navigation";
-import { useState, useRef, useEffect } from "react";
 import Item from "./item";
 
 export default function Nav() {

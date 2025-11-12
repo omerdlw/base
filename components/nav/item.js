@@ -1,12 +1,13 @@
-import { NAV_ANIMATION_CONFIG, ANIMATION_DURATIONS } from "@/config/constants";
-import { useMemo, useState, useEffect, useLayoutEffect } from "react";
-import { Description, Title, Icon as Badge } from "./elements";
-import { useComponentSize } from "@/hooks/use-component-size";
-import { Nav_ItemSkeleton } from "../shared/skeletons";
-import { useModal } from "@/contexts/modal-context";
-import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { ANIMATION_DURATIONS, NAV_ANIMATION_CONFIG } from "@/config/constants";
+import { useModal } from "@/contexts/modal-context";
+import { useComponentSize } from "@/hooks/use-component-size";
+import { CN } from "@/lib/utils";
 import Icon from "../icon";
+import { Nav_ItemSkeleton } from "../shared/skeletons";
+import { Icon as Badge, Description, Title } from "./elements";
 
 export default function Item({
     onActionHeightChange,
@@ -60,37 +61,24 @@ export default function Item({
             return "rounded-b-primary";
         }
 
-        return "";
+        return "rounded-none";
     };
 
     const getBorderClass = () => {
-        if (!expanded) {
-            return "border-2";
-        }
-
-        if (position >= 0) {
-            return "border-2";
-        }
-
-        return "";
+        return "border-2";
     };
 
     return (
         <motion.div
-            className={`absolute left-1/2 -translate-x-1/2 w-full h-auto cursor-pointer bg-white/60 dark:bg-black/40 backdrop-blur-lg p-3 transition transform-gpu will-change-transform ${getRoundedClass()} ${
-                expanded
-                    ? isIndividualHovered
-                        ? getBorderClass() + " border-primary"
-                        : getBorderClass() + " border-base/10"
-                    : isStackHovered
-                      ? "border-2 border-primary"
-                      : "border-2 border-base/10"
-            }`}
+            className={CN(
+                "absolute left-1/2 -translate-x-1/2 w-full h-auto overflow-hidden rounded-primary border-2 border-base/15 cursor-pointer bg-white/60 dark:bg-black/40 backdrop-blur-lg p-3 transition transform-gpu will-change-transform",
+                isHovered && "border-primary",
+            )}
             animate={{
                 y: expanded
                     ? position * expandedOffsetY
                     : position * collapsedOffsetY,
-                scale: expanded ? 1 : Math.pow(collapsedScale, position),
+                scale: expanded ? 1 : collapsedScale ** position,
                 zIndex: NAV_ANIMATION_CONFIG.expanded.scale - position,
                 opacity: 1,
             }}

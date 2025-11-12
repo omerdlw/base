@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
+import { Input } from "@/components/shared/elements";
 
 function TestAction() {
     return (
-        <div className="p-4 mt-2.5 bg-base/5 rounded-secondary center">
-            test action component
-        </div>
+        <Input noBorder className="mt-2.5" placeholder="Yayıncılarda arayın" />
     );
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useToast } from "@/hooks/use-toast";
 import React from "react";
+import { useToast } from "@/hooks/use-toast";
 
 class ErrorBoundaryClass extends React.Component {
     constructor(props) {

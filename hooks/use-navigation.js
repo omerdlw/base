@@ -1,7 +1,7 @@
-import { useNavigationContext } from "@/contexts/navigation-context";
-import { useEffect, useMemo, useState, useCallback } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { navConfigs } from "@/config/nav-configs";
+import { useNavigationContext } from "@/contexts/navigation-context";
 
 export const useNavigation = () => {
     const { dynamicNavItem, expanded, setExpanded } = useNavigationContext();

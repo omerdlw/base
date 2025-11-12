@@ -1,11 +1,11 @@
 "use client";
 
-import { Z_INDEX, ANIMATION_DURATIONS } from "@/config/constants";
-import { motion, AnimatePresence } from "framer-motion";
+import classNames from "classnames";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect } from "react";
+import { ANIMATION_DURATIONS, Z_INDEX } from "@/config/constants";
 import { useModal } from "@/contexts/modal-context";
 import { MODAL_COMPONENTS } from "./modals";
-import classNames from "classnames";
-import { useEffect } from "react";
 import Title from "./title";
 
 const positionClasses = {

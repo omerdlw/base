@@ -1,7 +1,7 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useControlsContext } from "@/contexts/controls-context";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function Controls() {
     const { leftControls, rightControls } = useControlsContext();
@@ -12,11 +12,11 @@ export default function Controls() {
             <AnimatePresence>
                 {hasControls && (
                     <motion.div
+                        className="w-full h-auto flex items-center justify-between space-x-3"
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 30 }}
-                        className="w-full h-auto flex items-center justify-between space-x-3"
                     >
                         <div className="w-full flex items-center justify-end space-x-3 pointer-events-auto">
                             {leftControls}

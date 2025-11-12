@@ -1,6 +1,6 @@
+import { useEffect } from "react";
 import Icon from "@/components/icon";
 import { CN } from "@/lib/utils";
-import { useEffect } from "react";
 
 const TOAST_TYPES = {
     SUCCESS: {
