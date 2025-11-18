@@ -3,47 +3,47 @@ import Icon from "@/components/icon";
 import { CN } from "@/lib/utils";
 
 const TOAST_TYPES = {
-    SUCCESS: {
-        icon: "solar:check-circle-linear",
-        className: "text-success",
-    },
-    ERROR: {
-        icon: "solar:close-circle-linear",
-        className: "text-error",
-    },
-    WARNING: {
-        icon: "solar:danger-circle-linear",
-        className: "text-warning",
-    },
-    INFO: {
-        icon: "solar:info-circle-linear",
-        className: "text-info",
-    },
+  SUCCESS: {
+    icon: "solar:check-circle-linear",
+    className: "text-success border border-success",
+  },
+  ERROR: {
+    icon: "solar:close-circle-linear",
+    className: "text-error border border-error",
+  },
+  WARNING: {
+    icon: "solar:danger-circle-linear",
+    className: "text-warning border border-warning",
+  },
+  INFO: {
+    icon: "solar:info-circle-linear",
+    className: "text-info border border-info",
+  },
 };
 
 export default function Item({ toast, onClose }) {
-    const { message, type = "INFO", duration = 2000 } = toast;
-    const toastConfig = TOAST_TYPES[type];
+  const { message, type = "INFO", duration = 2000 } = toast;
+  const toastConfig = TOAST_TYPES[type];
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            onClose();
-        }, duration);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, duration);
 
-        return () => clearTimeout(timer);
-    }, [onClose, duration]);
+    return () => clearTimeout(timer);
+  }, [onClose, duration]);
 
-    return (
-        <div className="relative bg-white dark:bg-black border border-black/15 dark:border-white/15 rounded-secondary shadow-lg">
-            <div className="min-w-[300px] max-w-[500px] p-4 flex items-center space-x-3">
-                <Icon
-                    icon={toastConfig.icon}
-                    className={toastConfig.className}
-                />
-                <p className={CN(toastConfig.className, "font-semibold")}>
-                    {message}
-                </p>
-            </div>
-        </div>
-    );
+  return (
+    <div
+      className={CN(
+        "relative w-full bg-white dark:bg-black rounded-secondary shadow-lg",
+        toastConfig.className
+      )}
+    >
+      <div className="px-4 py-3 w-full flex items-start gap-3">
+        <Icon icon={toastConfig.icon} className="shrink-0 mt-0.5" />
+        <p className="font-semibold w-full">{message}</p>
+      </div>
+    </div>
+  );
 }

@@ -2,6 +2,7 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* --- Color Variables --- */
 :root {
   --base: #000000;
   --primary: #3aa7d6;
@@ -20,22 +21,24 @@
   --info: #3aa7d6;
 }
 
+/* --- Theme Configuration --- */
 @theme {
+  /* Colors */
   --color-base: var(--base);
   --color-primary: var(--primary);
   --color-success: var(--success);
   --color-error: var(--error);
   --color-warning: var(--warning);
   --color-info: var(--info);
+
+  /* Radii */
+  --radius-primary: 12px;
+  --radius-secondary: 8px;
+  --radius-tertiary: 6px;
+  --radius-quaternary: 4px;
 }
 
-@theme {
-  --radius-primary: 30px;
-  --radius-secondary: 20px;
-  --radius-tertiary: 16px;
-  --radius-quaternary: 10px;
-}
-
+/* --- Global Resets & Utilities --- */
 * {
   box-sizing: border-box;
   outline: none;
