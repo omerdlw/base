@@ -1,33 +1,8 @@
 export const API_ENDPOINTS = {
-  PLACEHOLDER: "https://jsonplaceholder.typicode.com/todos/1",
+  PLACEHOLDER: '',
 };
 
 export const API_CONFIG = {};
-
-export const ROUTES = {
-  PAGE_1: "/placeholder",
-  PAGE_2: "/placeholder2",
-  PAGE_3: "/placeholder3",
-};
-
-export const NAV_ANIMATION_CONFIG = {
-  expanded: {
-    offsetY: -85,
-    scale: 1,
-  },
-  collapsed: {
-    offsetY: -11,
-    scale: 0.9,
-  },
-  transition: {
-    stiffness: 150,
-    mass: 0.8,
-    damping: 20,
-    restDelta: 0.1,
-  },
-  BASE_CARD_HEIGHT: 75,
-  ACTION_GAP: 10,
-};
 
 export const ANIMATION_DURATIONS = {
   NORMAL: 300,
@@ -44,7 +19,7 @@ export const Z_INDEX = {
 };
 
 export const BREAKPOINTS = {
-  "2XL": 1536,
+  '2XL': 1536,
   LG: 1024,
   XL: 1280,
   SM: 640,
@@ -52,31 +27,29 @@ export const BREAKPOINTS = {
 };
 
 export const STORAGE_KEYS = {
-  SETTINGS: "SETTINGS",
-  THEME: "THEME",
+  SETTINGS: 'SETTINGS',
+  THEME: 'THEME',
 };
 
 export const THEMES = {
-  SYSTEM: "system",
-  LIGHT: "light",
-  DARK: "dark",
+  DARK: 'dark',
 };
 
 export const VALID_THEMES = Object.values(THEMES);
 
 export const DATE_FORMATS = {
   FULL: {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   },
   SHORT: {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
   },
   YEAR_ONLY: {
-    year: "numeric",
+    year: 'numeric',
   },
 };
 
@@ -94,31 +67,4 @@ export const REGEX_PATTERNS = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   SLUG: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
   URL: /^https?:\/\/.+/,
-};
-
-export const TOAST_CONFIG = {
-  MAX_VISIBLE: 3,
-  OFFSET_Y: 10,
-  SCALE_OFFSET: 0.05,
-  WIDTH: 500,
-};
-
-export const MODAL_IDS = {
-  SETTINGS: "SETTINGS_MODAL",
-};
-
-export const MODAL_POSITIONS = {
-  CENTER: "center",
-  BOTTOM: "bottom",
-  LEFT: "left",
-  TOP: "top",
-  RIGHT: "right",
-};
-
-export const ANIMATION_CONFIGS = {
-  SPRING: {
-    type: "spring",
-    stiffness: 260,
-    damping: 20,
-  },
 };

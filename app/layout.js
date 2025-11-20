@@ -1,22 +1,37 @@
-import Controls from "@/components/controls";
-import Nav from "@/components/nav";
-import { montserrat, poppins } from "@/fonts";
-import { AppProviders } from "./providers";
-import "./globals.css";
+import { PageErrorBoundary } from '@/components/error-boundary';
+import { montserrat, poppins, dmSans } from '@/fonts';
+import { AppProviders } from './providers';
+import Controls from '@/modules/controls';
+import Footer from '@/modules/footer';
+import Nav from '@/modules/nav';
+import './globals.css';
+
+export const metadata = {
+  title: 'My Web Base',
+  description: 'A robust foundation for web projects',
+  openGraph: {
+    title: 'My Web Base',
+    description: 'A robust foundation for web projects',
+    type: 'website',
+  },
+};
 
 export default function RootLayout({ children }) {
-    return (
-        <html lang="en">
-            <body
-                suppressHydrationWarning={true}
-                className={`${poppins.className} ${montserrat.variable} w-full h-auto scroll-smooth antialiased bg-white dark:bg-black text-black dark:text-white fill-black dark:fill-white`}
-            >
-                <AppProviders>
-                    <Controls />
-                    <Nav />
-                    {children}
-                </AppProviders>
-            </body>
-        </html>
-    );
+  return (
+    <html lang='en'>
+      <body
+        suppressHydrationWarning={true}
+        className={`${montserrat.className} h-auto w-full font-medium scroll-smooth bg-black fill-white text-white antialiased`}
+      >
+        <AppProviders>
+          <PageErrorBoundary>
+            <Controls />
+            <Nav />
+            <main className='min-h-screen w-full'>{children}</main>
+            <Footer />
+          </PageErrorBoundary>
+        </AppProviders>
+      </body>
+    </html>
+  );
 }

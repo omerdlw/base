@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { STORAGE_KEYS, THEMES, VALID_THEMES } from "@/config/constants";
-import { GET_STORAGE_ITEM, SET_STORAGE_ITEM } from "@/lib/utils";
+import { STORAGE_KEYS } from '@/config/constants';
+import { GET_STORAGE_ITEM, SET_STORAGE_ITEM } from '@/lib/utils';
 import {
   createContext,
   useCallback,
@@ -9,13 +9,11 @@ import {
   useContext,
   useMemo,
   useState,
-} from "react";
+} from 'react';
 
 const SettingsContext = createContext(undefined);
 
-const DEFAULT_SETTINGS = {
-  THEME: THEMES.SYSTEM,
-};
+const DEFAULT_SETTINGS = {};
 
 const getStoredSettings = () => {
   const stored = GET_STORAGE_ITEM(STORAGE_KEYS.SETTINGS);
@@ -26,48 +24,16 @@ const saveSettings = (settings) => {
   return SET_STORAGE_ITEM(STORAGE_KEYS.SETTINGS, settings);
 };
 
-const applyThemePreference = (theme) => {
-  if (typeof window === "undefined") return;
-
-  let effectiveTheme = theme;
-
-  if (theme === THEMES.SYSTEM) {
-    effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? THEMES.DARK
-      : THEMES.LIGHT;
-  }
-
-  document.documentElement.className = effectiveTheme;
-};
-
 export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       setSettings(getStoredSettings());
       setIsInitialized(true);
     }
   }, []);
-
-  useEffect(() => {
-    if (!isInitialized) return;
-
-    applyThemePreference(settings.theme);
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleSystemThemeChange = () => {
-      if (settings.theme === THEMES.SYSTEM) {
-        applyThemePreference(THEMES.SYSTEM);
-      }
-    };
-
-    mediaQuery.addEventListener("change", handleSystemThemeChange);
-    return () => {
-      mediaQuery.removeEventListener("change", handleSystemThemeChange);
-    };
-  }, [settings.theme, isInitialized]);
 
   const updateSettings = useCallback((newSettings) => {
     setSettings((prev) => {
@@ -77,23 +43,6 @@ export function SettingsProvider({ children }) {
     });
   }, []);
 
-  const setTheme = useCallback(
-    (newTheme) => {
-      if (!VALID_THEMES.includes(newTheme)) {
-        console.error(`Invalid theme: ${newTheme}`);
-        return;
-      }
-      updateSettings({ theme: newTheme });
-    },
-    [updateSettings]
-  );
-
-  const toggleTheme = useCallback(() => {
-    const newTheme =
-      settings.theme === THEMES.DARK ? THEMES.LIGHT : THEMES.DARK;
-    setTheme(newTheme);
-  }, [settings.theme, setTheme]);
-
   const resetSettings = useCallback(() => {
     setSettings(DEFAULT_SETTINGS);
     saveSettings(DEFAULT_SETTINGS);
@@ -101,22 +50,12 @@ export function SettingsProvider({ children }) {
 
   const contextValue = useMemo(
     () => ({
-      theme: settings.THEME,
       updateSettings,
       isInitialized,
       resetSettings,
-      toggleTheme,
       settings,
-      setTheme,
     }),
-    [
-      updateSettings,
-      resetSettings,
-      isInitialized,
-      toggleTheme,
-      settings,
-      setTheme,
-    ]
+    [updateSettings, resetSettings, isInitialized, settings],
   );
 
   return (
@@ -129,7 +68,7 @@ export function SettingsProvider({ children }) {
 export function useSettings() {
   const context = useContext(SettingsContext);
   if (context === undefined) {
-    throw new Error("useSettings must be used within a SettingsProvider");
+    throw new Error('useSettings must be used within a SettingsProvider');
   }
   return context;
 }

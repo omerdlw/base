@@ -1,49 +1,33 @@
-@import "tailwindcss";
+@import url('https://fonts.cdnfonts.com/css/google-sans');
+@import 'tailwindcss';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* --- Color Variables --- */
 :root {
-  --base: #000000;
+  --warning: #f7c323;
   --primary: #3aa7d6;
+  --default: #ffffff;
   --success: #4ad951;
   --error: #d43333;
-  --warning: #f7c323;
   --info: #3aa7d6;
 }
 
-.dark {
-  --base: #ffffff;
-  --primary: #3aa7d6;
-  --success: #4ad951;
-  --error: #d43333;
-  --warning: #f7c323;
-  --info: #3aa7d6;
-}
-
-/* --- Theme Configuration --- */
 @theme {
-  /* Colors */
-  --color-base: var(--base);
   --color-primary: var(--primary);
   --color-success: var(--success);
-  --color-error: var(--error);
   --color-warning: var(--warning);
+  --color-default: var(--default);
+  --color-error: var(--error);
   --color-info: var(--info);
-
-  /* Radii */
-  --radius-primary: 12px;
-  --radius-secondary: 8px;
-  --radius-tertiary: 6px;
-  --radius-quaternary: 4px;
+  --radius-quaternary: 2px;
+  --radius-secondary: 7px;
+  --radius-primary: 10px;
+  --radius-tertiary: 4px;
 }
 
-/* --- Global Resets & Utilities --- */
 * {
-  box-sizing: border-box;
-  outline: none;
-  scrollbar-width: none;
   -ms-overflow-style: none;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  outline: none;
 }
 
 *::-webkit-scrollbar {
@@ -51,11 +35,24 @@
 }
 
 .center {
-  display: flex;
   justify-content: center;
   align-items: center;
+  display: flex;
 }
 
 .transition {
   @apply transition-colors duration-200 ease-in-out;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('https://fonts.gstatic.com/s/googlesans/v65/4UasrENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RPiIUvaYr.woff2')
+    format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.google-sans {
+  font-family: 'Google Sans', sans-serif;
 }

@@ -1,20 +1,19 @@
-import { NavigationProvider } from "@/contexts/navigation-context";
-import { SettingsProvider } from "@/contexts/settings-context";
-import { ModalProvider } from "@/contexts/modal-context";
-import React from "react";
-import { ControlsProvider } from "@/contexts/controls-context";
-import { ToastProvider } from "@/contexts/toast-context";
+import { NavigationProvider } from '@/modules/nav/context';
+import { SettingsProvider } from '@/contexts/settings-context';
+import { ModalProvider } from '@/modules/modal/context';
+import { ControlsProvider } from '@/modules/controls/context';
+import { ToastProvider } from '@/modules/toast/context';
 
 const providers = [
-    NavigationProvider,
-    ControlsProvider,
-    SettingsProvider,
-    ToastProvider,
-    ModalProvider,
+  NavigationProvider,
+  ControlsProvider,
+  SettingsProvider,
+  ToastProvider,
+  ModalProvider,
 ];
 
 export const AppProviders = ({ children }) => {
-    return providers.reduceRight((acc, Provider) => {
-        return <Provider>{acc}</Provider>;
-    }, children);
+  return providers.reduceRight((acc, Provider) => {
+    return <Provider>{acc}</Provider>;
+  }, children);
 };
