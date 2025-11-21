@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FILTER_OPTIONS } from './utils';
-import { CONFIG } from './constants';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FILTER_OPTIONS } from "./utils";
+import { CONFIG } from "./constants";
 
 export const useImageWithRetry = (
   maxRetries = CONFIG.imageRetry.maxRetries,
-  src,
+  src
 ) => {
   const [currentSrc, setCurrentSrc] = useState(src);
   const [retryCount, setRetryCount] = useState(0);
@@ -46,29 +46,29 @@ export const useKeyboardNavigation = (options, isOpen, onSelect, onClose) => {
 
     const handleKeyDown = (e) => {
       switch (e.key) {
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
           setFocusedIndex((prev) => Math.min(prev + 1, options.length - 1));
           break;
-        case 'ArrowUp':
+        case "ArrowUp":
           e.preventDefault();
           setFocusedIndex((prev) => Math.max(prev - 1, 0));
           break;
-        case 'Enter':
+        case "Enter":
           e.preventDefault();
           if (focusedIndex >= 0 && options[focusedIndex]) {
             onSelect(options[focusedIndex]);
           }
           break;
-        case 'Escape':
+        case "Escape":
           e.preventDefault();
           onClose();
           break;
-        case 'Home':
+        case "Home":
           e.preventDefault();
           setFocusedIndex(0);
           break;
-        case 'End':
+        case "End":
           e.preventDefault();
           setFocusedIndex(options.length - 1);
           break;
@@ -77,8 +77,8 @@ export const useKeyboardNavigation = (options, isOpen, onSelect, onClose) => {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, focusedIndex, options, onSelect, onClose]);
 
   return { focusedIndex, setFocusedIndex };
@@ -94,8 +94,8 @@ export const useClickOutside = (ref, callback, enabled = true) => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [ref, callback, enabled]);
 };
 
@@ -109,7 +109,7 @@ export const useSelectbox = (options, onChange, value) => {
     return options[0] || null;
   });
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef(null);
   const menuRef = useRef(null);
@@ -123,7 +123,7 @@ export const useSelectbox = (options, onChange, value) => {
       const foundOption = options.find((opt) => opt.value === value);
       if (foundOption) {
         setInternalValue((prev) =>
-          prev?.value !== foundOption.value ? foundOption : prev,
+          prev?.value !== foundOption.value ? foundOption : prev
         );
       }
     }
@@ -138,23 +138,23 @@ export const useSelectbox = (options, onChange, value) => {
 
       if (!isClickInsideSelect && !isClickInsideMenu) {
         setIsOpen(false);
-        setSearchQuery('');
+        setSearchQuery("");
       }
     };
 
     const handleEscape = (event) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setIsOpen(false);
-        setSearchQuery('');
+        setSearchQuery("");
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen]);
 
@@ -166,10 +166,10 @@ export const useSelectbox = (options, onChange, value) => {
         setInternalValue(option);
       }
       setIsOpen(false);
-      setSearchQuery('');
+      setSearchQuery("");
       onChange?.(option);
     },
-    [onChange, isControlled],
+    [onChange, isControlled]
   );
 
   const toggleMenu = useCallback(
@@ -177,22 +177,22 @@ export const useSelectbox = (options, onChange, value) => {
       e?.stopPropagation();
       setIsOpen((prev) => {
         if (prev) {
-          setSearchQuery('');
+          setSearchQuery("");
         }
         return !prev;
       });
     },
-    [setSearchQuery],
+    [setSearchQuery]
   );
 
   const closeMenu = useCallback(() => {
     setIsOpen(false);
-    setSearchQuery('');
+    setSearchQuery("");
   }, []);
 
   const filteredOptions = useMemo(
     () => FILTER_OPTIONS(options, searchQuery),
-    [options, searchQuery],
+    [options, searchQuery]
   );
 
   return {
@@ -207,4 +207,57 @@ export const useSelectbox = (options, onChange, value) => {
     selectRef,
     menuRef,
   };
+};
+
+export const useInteractiveMove = (containerRef, onMove) => {
+  const onMoveRef = useRef(onMove);
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    onMoveRef.current = onMove;
+  }, [onMove]);
+
+  useEffect(() => {
+    const handleUp = () => setIsDragging(false);
+
+    const handleMouseMove = (e) => {
+      if (!containerRef.current) return;
+      const { left, top, width, height } =
+        containerRef.current.getBoundingClientRect();
+      const x = Math.max(0, Math.min(1, (e.clientX - left) / width));
+      const y = Math.max(0, Math.min(1, (e.clientY - top) / height));
+
+      if (onMoveRef.current) {
+        onMoveRef.current(x, y);
+      }
+    };
+
+    if (isDragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleUp);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+  }, [isDragging, containerRef]);
+
+  const handleMouseDown = useCallback(
+    (e) => {
+      setIsDragging(true);
+      if (!containerRef.current) return;
+      const { left, top, width, height } =
+        containerRef.current.getBoundingClientRect();
+      const x = Math.max(0, Math.min(1, (e.clientX - left) / width));
+      const y = Math.max(0, Math.min(1, (e.clientY - top) / height));
+
+      if (onMoveRef.current) {
+        onMoveRef.current(x, y);
+      }
+    },
+    [containerRef]
+  );
+
+  return { handleMouseDown, isDragging };
 };

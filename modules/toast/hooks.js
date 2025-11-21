@@ -1,14 +1,20 @@
-import { useToastContext } from './context';
+"use client";
+
+import { useMemo } from "react";
+import { useToastContext } from "./context";
 
 export function useToast() {
   const { showToast } = useToastContext();
 
-  const toast = {
-    success: (message, duration) => showToast(message, 'SUCCESS', duration),
-    error: (message, duration) => showToast(message, 'ERROR', duration),
-    warning: (message, duration) => showToast(message, 'WARNING', duration),
-    info: (message, duration) => showToast(message, 'INFO', duration),
-  };
+  const toast = useMemo(
+    () => ({
+      success: (message, duration) => showToast(message, "SUCCESS", duration),
+      error: (message, duration) => showToast(message, "ERROR", duration),
+      warning: (message, duration) => showToast(message, "WARNING", duration),
+      info: (message, duration) => showToast(message, "INFO", duration),
+    }),
+    [showToast]
+  );
 
   return toast;
 }

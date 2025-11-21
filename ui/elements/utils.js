@@ -1,40 +1,19 @@
-'use client';
+"use client";
 
-import { ROUNDED_CLASSES } from './constants';
+import { ROUNDED_CLASSES } from "./constants";
 
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
-/**
- * Check if a string is an image URL
- * @param {string} url - URL to check
- * @returns {boolean} True if URL starts with http
- */
 export const IS_IMAGE_URL = (url) => {
-  return Boolean(url?.startsWith('http'));
+  return Boolean(url?.startsWith("http"));
 };
 
-/**
- * Filter options based on search query
- * @param {Array} options - Array of option objects with label property
- * @param {string} query - Search query string
- * @returns {Array} Filtered options
- */
 export const FILTER_OPTIONS = (options, query) => {
   if (!query) return options;
   const lowerQuery = query.toLowerCase();
   return options.filter((option) =>
-    option.label.toLowerCase().includes(lowerQuery),
+    option.label.toLowerCase().includes(lowerQuery)
   );
 };
 
-/**
- * Throttle function execution
- * @param {Function} func - Function to throttle
- * @param {number} limit - Time limit in milliseconds
- * @returns {Function} Throttled function
- */
 export const THROTTLE = (func, limit) => {
   let inThrottle;
   return function (...args) {
@@ -46,21 +25,12 @@ export const THROTTLE = (func, limit) => {
   };
 };
 
-/**
- * Calculate the position of the menu relative to the trigger
- * @param {DOMRect} triggerRect - Bounding rectangle of the trigger element
- * @param {DOMRect} menuRect - Bounding rectangle of the menu element
- * @param {string} direction - Direction to open the menu (top, bottom, left, right)
- * @param {number} menuWidth - Custom width for the menu
- * @param {number} margin - Margin between trigger and menu
- * @returns {Object} Position object with top, left, and width
- */
 export const CALCULATE_MENU_POSITION = (
   triggerRect,
   menuRect,
   direction,
   menuWidth,
-  margin = 8,
+  margin = 8
 ) => {
   const scrollX = window.scrollX;
   const scrollY = window.scrollY;
@@ -70,22 +40,22 @@ export const CALCULATE_MENU_POSITION = (
   const width = menuWidth || triggerRect.width;
 
   switch (direction) {
-    case 'top':
+    case "top":
       top = menuRect
         ? triggerRect.bottom + scrollY - menuRect.height
         : triggerRect.bottom + scrollY - 200; // Fallback height
       break;
-    case 'left':
+    case "left":
       left = menuRect
         ? triggerRect.left + scrollX - menuRect.width - margin
         : triggerRect.left + scrollX - width - margin;
       top = triggerRect.top + scrollY;
       break;
-    case 'right':
+    case "right":
       left = triggerRect.right + scrollX + margin;
       top = triggerRect.top + scrollY;
       break;
-    case 'bottom':
+    case "bottom":
     default:
       top = triggerRect.bottom + scrollY + margin;
       break;
@@ -94,19 +64,11 @@ export const CALCULATE_MENU_POSITION = (
   return { top, left, width };
 };
 
-/**
- * Get the rounded class for a selectbox option based on its position
- * @param {number} index - Index of the option
- * @param {number} totalCount - Total number of options
- * @param {string} rounded - Rounded style name
- * @param {boolean} showSearch - Whether search is shown
- * @returns {string} Tailwind class for rounded corners
- */
 export const GET_OPTION_ROUNDED_CLASS = (
   index,
   totalCount,
   rounded,
-  showSearch,
+  showSearch
 ) => {
   const classes = ROUNDED_CLASSES[rounded] || ROUNDED_CLASSES.secondary;
 
@@ -122,16 +84,109 @@ export const GET_OPTION_ROUNDED_CLASS = (
     return classes.bottom;
   }
 
-  return '';
+  return "";
 };
 
-/**
- * Get a specific rounded class from the configuration
- * @param {string} rounded - Rounded style name
- * @param {string} position - Position (full, top, bottom)
- * @returns {string} Tailwind class
- */
-export const GET_ROUNDED_CLASS = (rounded, position = 'full') => {
+export const GET_ROUNDED_CLASS = (rounded, position = "full") => {
   const classes = ROUNDED_CLASSES[rounded] || ROUNDED_CLASSES.secondary;
   return classes[position] || classes.full;
+};
+
+export const HEX_TO_RGB = (hex) => {
+  let r = 0,
+    g = 0,
+    b = 0;
+  if (hex.length === 4) {
+    r = parseInt("0x" + hex[1] + hex[1]);
+    g = parseInt("0x" + hex[2] + hex[2]);
+    b = parseInt("0x" + hex[3] + hex[3]);
+  } else if (hex.length === 7) {
+    r = parseInt("0x" + hex[1] + hex[2]);
+    g = parseInt("0x" + hex[3] + hex[4]);
+    b = parseInt("0x" + hex[5] + hex[6]);
+  }
+  return { r, g, b };
+};
+
+export const RGB_TO_HEX = (r, g, b) => {
+  const toHex = (c) =>
+    ("0" + Math.max(0, Math.min(255, Math.round(c || 0))).toString(16)).slice(
+      -2
+    );
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+export const RGB_TO_HSV = (r, g, b) => {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h,
+    s,
+    v = max;
+  const d = max - min;
+  s = max === 0 ? 0 : d / max;
+  if (max === min) h = 0;
+  else {
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+  return { h: h * 360, s: s * 100, v: v * 100 };
+};
+
+export const HSV_TO_RGB = (h, s, v) => {
+  let r, g, b;
+  const i = Math.floor(h * 6);
+  const f = h * 6 - i;
+  const p = v * (1 - s);
+  const q = v * (1 - f * s);
+  const t = v * (1 - (1 - f) * s);
+  switch (i % 6) {
+    case 0:
+      r = v;
+      g = t;
+      b = p;
+      break;
+    case 1:
+      r = q;
+      g = v;
+      b = p;
+      break;
+    case 2:
+      r = p;
+      g = v;
+      b = t;
+      break;
+    case 3:
+      r = p;
+      g = q;
+      b = v;
+      break;
+    case 4:
+      r = t;
+      g = p;
+      b = v;
+      break;
+    case 5:
+      r = v;
+      g = p;
+      b = q;
+      break;
+  }
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255),
+  };
 };

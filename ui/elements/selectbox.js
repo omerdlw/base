@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { useKeyboardNavigation, useSelectbox } from './hooks';
-import { CN, GET_NEXT_ROUNDED_LEVEL } from '@/lib/utils';
-import IconWrapper from './icon-wrapper';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { useKeyboardNavigation, useSelectbox } from "./hooks";
+import { CN, GET_NEXT_ROUNDED_LEVEL } from "@/lib/utils";
+import IconWrapper from "./icon-wrapper";
 import {
   SELECTBOX_MENU_ITEM_SIZE_CONFIGURATIONS,
   SIZE_CONFIGURATIONS,
   COMPONENT_STYLES,
   CONFIG,
-} from './constants';
+} from "./constants";
 import {
   GET_OPTION_ROUNDED_CLASS,
   CALCULATE_MENU_POSITION,
   GET_ROUNDED_CLASS,
   THROTTLE,
-} from './utils';
+} from "./utils";
 
 const SelectboxOption = memo(
   ({
@@ -41,7 +41,7 @@ const SelectboxOption = memo(
           onSelect?.(option);
         }
       },
-      [disabled, onSelect, option],
+      [disabled, onSelect, option]
     );
 
     return (
@@ -49,49 +49,49 @@ const SelectboxOption = memo(
         key={value}
         ref={isFocused ? focusedItemRef : null}
         onClick={handleClick}
-        role='option'
+        role="option"
         aria-selected={isSelected}
         aria-disabled={disabled}
         tabIndex={disabled ? -1 : 0}
         className={CN(
-          'flex cursor-pointer items-center p-1 transition',
-          'bg-black/40',
-          'border border-transparent',
+          "flex cursor-pointer items-center p-1 transition",
+          "bg-black/40",
+          "border border-transparent",
           GET_OPTION_ROUNDED_CLASS(index, totalCount, rounded, showSearch),
           sizeConfig.button.withText,
-          'hover:bg-default/10 dark:hover:bg-default/10',
-          isSelected && 'bg-primary/50!',
-          isFocused && 'border-primary! bg-primary/10!',
-          disabled && COMPONENT_STYLES.shared.disabled,
+          "hover:bg-default/10",
+          isSelected && "bg-primary/30!",
+          isFocused && "border-primary! bg-primary/10!",
+          disabled && COMPONENT_STYLES.shared.disabled
         )}
       >
         {icon && (
           <IconWrapper
             className={CN(
-              'center bg-default/5 h-full shrink-0 transition',
-              'rounded-quaternary',
-              sizeConfig.icon,
+              "center bg-default/5 h-full shrink-0 transition",
+              "rounded-quaternary",
+              sizeConfig.icon
             )}
             icon={icon}
           />
         )}
-        <div className='flex w-full flex-col items-start justify-center -space-y-0.5 px-1.5'>
+        <div className="flex w-full flex-col items-start justify-center -space-y-0.5 px-1.5">
           <div
             className={CN(
-              'w-full appearance-none bg-transparent outline-none',
-              description && 'font-semibold',
-              sizeConfig.text,
+              "w-full appearance-none bg-transparent outline-none",
+              description && "font-semibold",
+              sizeConfig.text
             )}
           >
             {label}
           </div>
           {description && (
-            <span className='text-xs opacity-70'>{description}</span>
+            <span className="text-xs opacity-70">{description}</span>
           )}
         </div>
       </div>
     );
-  },
+  }
 );
 
 const SelectboxMenu = memo(
@@ -104,7 +104,7 @@ const SelectboxMenu = memo(
     menuWidth,
     onSelect,
     options,
-    rounded = 'secondary',
+    rounded = "secondary",
     triggerRef,
     blurry,
     size,
@@ -129,7 +129,7 @@ const SelectboxMenu = memo(
       (e) => {
         onSearchChange(e.target.value);
       },
-      [onSearchChange],
+      [onSearchChange]
     );
 
     const updatePosition = useCallback(() => {
@@ -141,14 +141,14 @@ const SelectboxMenu = memo(
         menuRect,
         direction,
         menuWidth,
-        0,
+        0
       );
       setPosition(newPosition);
     }, [triggerRef, direction, menuWidth, menuRef]);
 
     const throttledUpdatePosition = useMemo(
       () => THROTTLE(updatePosition, 16),
-      [updatePosition],
+      [updatePosition]
     );
 
     useEffect(() => {
@@ -157,21 +157,21 @@ const SelectboxMenu = memo(
       updatePosition();
       const timeoutId = setTimeout(updatePosition, 0);
 
-      window.addEventListener('scroll', throttledUpdatePosition, true);
-      window.addEventListener('resize', throttledUpdatePosition);
+      window.addEventListener("scroll", throttledUpdatePosition, true);
+      window.addEventListener("resize", throttledUpdatePosition);
 
       return () => {
         clearTimeout(timeoutId);
-        window.removeEventListener('scroll', throttledUpdatePosition, true);
-        window.removeEventListener('resize', throttledUpdatePosition);
+        window.removeEventListener("scroll", throttledUpdatePosition, true);
+        window.removeEventListener("resize", throttledUpdatePosition);
       };
     }, [triggerRef, throttledUpdatePosition, updatePosition]);
 
     useEffect(() => {
       if (focusedIndex >= 0 && focusedItemRef.current) {
         focusedItemRef.current.scrollIntoView({
-          block: 'nearest',
-          behavior: 'smooth',
+          block: "nearest",
+          behavior: "smooth",
         });
       }
     }, [focusedIndex]);
@@ -180,60 +180,60 @@ const SelectboxMenu = memo(
       <div
         ref={menuRef}
         className={CN(
-          'border-default/10 bg-default/5 absolute top-0 overflow-hidden border p-1 backdrop-blur-xl',
+          "border-default/10 bg-default/5 absolute top-0 overflow-hidden border p-1 backdrop-blur-xl",
           rounded && `rounded-${rounded}`,
-          'z-100',
+          "z-100",
           blurry
             ? COMPONENT_STYLES.blur.enabled
-            : COMPONENT_STYLES.blur.disabled,
+            : COMPONENT_STYLES.blur.disabled
         )}
         style={{
           top: `${position.top}px`,
           left: `${position.left}px`,
-          width: position.width ? `${position.width}px` : 'auto',
+          width: position.width ? `${position.width}px` : "auto",
         }}
-        role='listbox'
-        aria-label='Options'
+        role="listbox"
+        aria-label="Options"
       >
         {showSearch && (
           <div
             onClick={(e) => e.stopPropagation()}
             className={CN(
-              'p-2.5 transition-colors bg-black/40',
-              'hover:bg-default/5 focus:bg-default/5',
-              GET_ROUNDED_CLASS(nextRounded, 'top'),
+              "p-2.5 transition-colors bg-black/40",
+              "hover:bg-default/5 focus:bg-default/5",
+              GET_ROUNDED_CLASS(nextRounded, "top")
             )}
           >
             <input
-              className={CN('w-full bg-transparent outline-none')}
-              placeholder='Search in options'
+              className={CN("w-full bg-transparent outline-none")}
+              placeholder="Search in options"
               onChange={handleSearchChange}
               value={searchQuery}
-              type='text'
+              type="text"
               autoFocus
-              aria-label='Search options'
+              aria-label="Search options"
             />
           </div>
         )}
         <div
           className={CN(
             CONFIG.menu.maxHeight +
-              ' space-y-0.5 overflow-x-hidden overflow-y-auto',
+              " space-y-0.5 overflow-x-hidden overflow-y-auto",
             rounded && `rounded-b-${nextRounded}`,
-            showSearch && 'mt-0.5',
+            showSearch && "mt-0.5"
           )}
         >
           {options.length === 0 ? (
             <div
               className={CN(
-                'cursor-not-allowed bg-black/40 p-2.5 transition-colors',
+                "cursor-not-allowed bg-black/40 p-2.5 transition-colors",
                 sizeConfig.text,
                 showSearch
-                  ? GET_ROUNDED_CLASS(nextRounded, 'bottom')
-                  : GET_ROUNDED_CLASS(nextRounded, 'full'),
+                  ? GET_ROUNDED_CLASS(nextRounded, "bottom")
+                  : GET_ROUNDED_CLASS(nextRounded, "full")
               )}
             >
-              <span className='text-sm opacity-70'>No options found</span>
+              <span className="text-sm opacity-70">No options found</span>
             </div>
           ) : (
             options.map((option, index) => {
@@ -261,10 +261,10 @@ const SelectboxMenu = memo(
       </div>
     );
 
-    if (typeof window === 'undefined' || !mounted) return null;
+    if (typeof window === "undefined" || !mounted) return null;
 
     return createPortal(menuContent, document.body);
-  },
+  }
 );
 
 const SelectboxValue = memo(
@@ -289,10 +289,10 @@ const SelectboxValue = memo(
           <IconWrapper
             className={CN(
               isOpen
-                ? 'bg-primary text-white'
-                : 'bg-default/5 group-hover:bg-primary transition group-hover:text-white',
-              'center h-full shrink-0',
-              iconClassName,
+                ? "bg-primary text-white"
+                : "bg-default/5 group-hover:bg-primary transition group-hover:text-white",
+              "center h-full shrink-0",
+              iconClassName
             )}
             rounded={iconRounded}
             loading={loading}
@@ -300,37 +300,37 @@ const SelectboxValue = memo(
             icon={icon}
           />
         )}
-        <div className='flex w-full flex-col items-start justify-center -space-y-0.5 px-3'>
+        <div className="flex w-full flex-col items-start justify-center -space-y-0.5 px-3">
           <div
             className={CN(
-              'w-full appearance-none bg-transparent outline-none',
-              description && 'font-semibold',
-              !selectedOption && 'opacity-50',
-              textClassName,
+              "w-full appearance-none bg-transparent outline-none",
+              description && "font-semibold",
+              !selectedOption && "opacity-50",
+              textClassName
             )}
           >
-            {selectedOption?.label || text || placeholder || 'Select an option'}
+            {selectedOption?.label || text || placeholder || "Select an option"}
           </div>
           {description && (
-            <span className='text-xs opacity-70'>{description}</span>
+            <span className="text-xs opacity-70">{description}</span>
           )}
         </div>
       </>
     );
-  },
+  }
 );
 
 export const Selectbox = memo(
   ({
-    rounded = 'secondary',
-    direction = 'top',
+    rounded = "secondary",
+    direction = "top",
     loading = false,
     blurry = false,
     disabled = false,
     options = [],
     description,
     placeholder,
-    size = 'md',
+    size = "md",
     className,
     menuWidth,
     onChange,
@@ -357,7 +357,7 @@ export const Selectbox = memo(
       filteredOptions,
       isOpen,
       handleSelect,
-      closeMenu,
+      closeMenu
     );
 
     const sizeConfig = SIZE_CONFIGURATIONS[size];
@@ -368,7 +368,7 @@ export const Selectbox = memo(
           toggleMenu(e);
         }
       },
-      [disabled, toggleMenu],
+      [disabled, toggleMenu]
     );
 
     return (
@@ -377,23 +377,23 @@ export const Selectbox = memo(
           COMPONENT_STYLES.base,
           rounded && `rounded-${rounded}`,
           sizeConfig.button.withText,
-          'relative cursor-pointer',
-          isOpen ? 'z-20' : 'z-10',
+          "relative cursor-pointer",
+          isOpen ? "z-20" : "z-10",
           blurry
             ? COMPONENT_STYLES.blur.enabled
             : COMPONENT_STYLES.blur.disabled,
           className,
-          isOpen && 'border-primary',
-          disabled && COMPONENT_STYLES.shared.disabled,
+          isOpen && "border-primary",
+          disabled && COMPONENT_STYLES.shared.disabled
         )}
-        aria-label={text || description || 'Select option'}
+        aria-label={text || description || "Select option"}
         onClick={handleToggle}
         ref={selectRef}
-        role='combobox'
+        role="combobox"
         aria-expanded={isOpen}
-        aria-haspopup='listbox'
+        aria-haspopup="listbox"
         aria-disabled={disabled}
-        aria-controls={isOpen ? 'selectbox-menu' : undefined}
+        aria-controls={isOpen ? "selectbox-menu" : undefined}
         {...props}
       >
         <SelectboxValue
@@ -429,5 +429,5 @@ export const Selectbox = memo(
         )}
       </div>
     );
-  },
+  }
 );
