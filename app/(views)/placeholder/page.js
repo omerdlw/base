@@ -15,20 +15,23 @@ export default function Placeholder() {
       left: (
         <Button
           onClick={() => toast.info("Test butonu tıklandı")}
-          icon="solar:archive-bold"
-          text="Test"
+          data={{
+            icon: "solar:archive-bold",
+            text: "Test Butonu",
+          }}
         />
       ),
       right: (
         <Selectbox
-          options={[
-            { label: "Seçenek 1", value: "opt1" },
-            { label: "Seçenek 2", value: "opt2" },
-          ]}
-          icon="solar:adhesive-plaster-2-bold"
-          onChange={() => {}}
-          direction="top"
-          text="Seçim"
+          data={{
+            options: [
+              { label: "Seçenek 1", value: "opt1" },
+              { label: "Seçenek 2", value: "opt2" },
+            ],
+            icon: "solar:adhesive-plaster-2-bold",
+            text: "Seçim",
+          }}
+          visuals={{ direction: "bottom" }}
         />
       ),
     }),

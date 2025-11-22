@@ -2,10 +2,6 @@
 
 import { ROUNDED_CLASSES } from "./constants";
 
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
 export const IS_IMAGE_URL = (url) => {
   return Boolean(url?.startsWith("http"));
 };
@@ -96,7 +92,6 @@ export const GET_ROUNDED_CLASS = (rounded, position = "full") => {
   return classes[position] || classes.full;
 };
 
-// --- Color Picker Helpers ---
 export const HEX_TO_RGB = (hex) => {
   let r = 0,
     g = 0,
@@ -194,4 +189,34 @@ export const HSV_TO_RGB = (h, s, v) => {
     g: Math.round(g * 255),
     b: Math.round(b * 255),
   };
+};
+
+export const arePropsEqual = (prevProps, nextProps) => {
+  const prevKeys = Object.keys(prevProps);
+  const nextKeys = Object.keys(nextProps);
+
+  if (prevKeys.length !== nextKeys.length) return false;
+
+  for (const key of prevKeys) {
+    const prevVal = prevProps[key];
+    const nextVal = nextProps[key];
+
+    if (
+      typeof prevVal === "object" &&
+      prevVal !== null &&
+      typeof nextVal === "object" &&
+      nextVal !== null
+    ) {
+      const pKeys = Object.keys(prevVal);
+      const nKeys = Object.keys(nextVal);
+      if (pKeys.length !== nKeys.length) return false;
+
+      for (const subKey of pKeys) {
+        if (prevVal[subKey] !== nextVal[subKey]) return false;
+      }
+    } else if (prevVal !== nextVal) {
+      return false;
+    }
+  }
+  return true;
 };

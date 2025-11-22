@@ -24,463 +24,458 @@ import {
   CALCULATE_MENU_POSITION,
   GET_ROUNDED_CLASS,
   THROTTLE,
+  arePropsEqual,
 } from "./utils";
 import { useMenuAnimation, useMenuOptionsAnimation } from "./use-animations";
 
-const SelectboxOption = memo(
-  ({
-    option,
-    index,
-    totalCount,
-    isFocused,
-    isSelected,
-    onSelect,
-    sizeConfig,
-    rounded,
-    showSearch,
-    focusedItemRef,
-  }) => {
-    const { icon, description, label, value, disabled } = option;
+const SelectboxOption = memo(({ data, visuals, controls }) => {
+  const { option, index, totalCount, isFocused, isSelected } = data;
+  const { sizeConfig, rounded, showSearch, focusedItemRef } = visuals;
+  const { onSelect } = controls;
 
-    const handleClick = useCallback(
-      (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!disabled) {
-          onSelect?.(option);
-        }
-      },
-      [disabled, onSelect, option]
-    );
+  const { icon, description, label, value, disabled } = option;
 
-    return (
-      <div
-        key={value}
-        ref={isFocused ? focusedItemRef : null}
-        onClick={handleClick}
-        role="option"
-        aria-selected={isSelected}
-        aria-disabled={disabled}
-        tabIndex={disabled ? -1 : 0}
-        className={CN(
-          "flex cursor-pointer items-center p-1 transition",
-          "bg-black/40",
-          "border border-transparent",
-          GET_OPTION_ROUNDED_CLASS(index, totalCount, rounded, showSearch),
-          sizeConfig.button.withText,
-          "hover:bg-default/10 dark:hover:bg-default/10",
-          isSelected && "bg-primary/50!",
-          isFocused && "border-primary! bg-primary/10!",
-          disabled && COMPONENT_STYLES.shared.disabled
-        )}
-      >
-        {icon && (
-          <IconWrapper
-            className={CN(
+  const handleClick = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!disabled) {
+        onSelect?.(option);
+      }
+    },
+    [disabled, onSelect, option]
+  );
+
+  return (
+    <div
+      key={value}
+      ref={isFocused ? focusedItemRef : null}
+      onClick={handleClick}
+      role="option"
+      aria-selected={isSelected}
+      aria-disabled={disabled}
+      tabIndex={disabled ? -1 : 0}
+      className={CN(
+        "flex cursor-pointer items-center p-1 transition",
+        "bg-black/40",
+        "border border-transparent",
+        GET_OPTION_ROUNDED_CLASS(index, totalCount, rounded, showSearch),
+        sizeConfig.button.withText,
+        "hover:bg-default/10 dark:hover:bg-default/10",
+        isSelected && "bg-primary/50!",
+        isFocused && "border-primary! bg-primary/10!",
+        disabled && COMPONENT_STYLES.shared.disabled
+      )}
+    >
+      {icon && (
+        <IconWrapper
+          data={{ icon }}
+          visuals={{
+            rounded: "quaternary",
+            className: CN(
               "center bg-default/5 h-full shrink-0 transition",
-              "rounded-quaternary",
               sizeConfig.icon
-            )}
-            icon={icon}
-          />
-        )}
-        <div className="flex w-full flex-col items-start justify-center -space-y-0.5 px-1.5">
-          <div
-            className={CN(
-              "w-full appearance-none bg-transparent outline-none",
-              description && "font-semibold",
-              sizeConfig.text
-            )}
-          >
-            {label}
-          </div>
-          {description && (
-            <span className="text-xs opacity-70">{description}</span>
+            ),
+          }}
+        />
+      )}
+      <div className="flex w-full flex-col items-start justify-center -space-y-0.5 px-1.5">
+        <div
+          className={CN(
+            "w-full appearance-none bg-transparent outline-none",
+            description && "font-semibold",
+            sizeConfig.text
           )}
+        >
+          {label}
         </div>
+        {description && (
+          <span className="text-xs opacity-70">{description}</span>
+        )}
       </div>
-    );
-  }
-);
+    </div>
+  );
+}, arePropsEqual);
 
-const SelectboxMenu = memo(
-  ({
-    menuRef: externalMenuRef,
-    onSearchChange,
+const SelectboxMenu = memo(({ data, visuals, controls }) => {
+  const {
     totalOptions,
     searchQuery,
-    direction,
-    menuWidth,
-    onSelect,
     options,
-    rounded = "secondary",
-    triggerRef,
-    noGlass,
-    size,
     focusedIndex,
     selectedOption,
     isOpen,
-    onAnimationComplete,
-  }) => {
-    const showSearch = totalOptions >= CONFIG.menu.searchThreshold;
-    const nextRounded = GET_NEXT_ROUNDED_LEVEL(rounded);
-    const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
-    const [mounted, setMounted] = useState(false);
-    const internalMenuRef = useRef(null);
-    const menuRef = externalMenuRef || internalMenuRef;
-    const sizeConfig = SELECTBOX_MENU_ITEM_SIZE_CONFIGURATIONS[size];
-    const focusedItemRef = useRef(null);
+  } = data;
+  const {
+    direction,
+    menuWidth,
+    rounded = "secondary",
+    noGlass,
+    size,
+    menuRef: externalMenuRef,
+    triggerRef,
+  } = visuals;
+  const { onSearchChange, onSelect, onAnimationComplete } = controls;
 
-    // Animation hook
-    useMenuAnimation(menuRef, isOpen, onAnimationComplete);
+  const showSearch = totalOptions >= CONFIG.menu.searchThreshold;
+  const nextRounded = GET_NEXT_ROUNDED_LEVEL(rounded);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [mounted, setMounted] = useState(false);
+  const internalMenuRef = useRef(null);
+  const menuRef = externalMenuRef || internalMenuRef;
+  const sizeConfig = SELECTBOX_MENU_ITEM_SIZE_CONFIGURATIONS[size];
+  const focusedItemRef = useRef(null);
 
-    useEffect(() => {
-      setMounted(true);
-      return () => setMounted(false);
-    }, []);
+  useMenuAnimation(menuRef, isOpen, onAnimationComplete);
 
-    const handleSearchChange = useCallback(
-      (e) => {
-        onSearchChange(e.target.value);
-      },
-      [onSearchChange]
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  const handleSearchChange = useCallback(
+    (e) => {
+      onSearchChange(e.target.value);
+    },
+    [onSearchChange]
+  );
+
+  const updatePosition = useCallback(() => {
+    if (!triggerRef?.current) return;
+    const triggerRect = triggerRef.current.getBoundingClientRect();
+    const menuRect = menuRef.current?.getBoundingClientRect();
+    const newPosition = CALCULATE_MENU_POSITION(
+      triggerRect,
+      menuRect,
+      direction,
+      menuWidth,
+      0
     );
+    setPosition(newPosition);
+  }, [triggerRef, direction, menuWidth, menuRef]);
 
-    const updatePosition = useCallback(() => {
-      if (!triggerRef?.current) return;
-      const triggerRect = triggerRef.current.getBoundingClientRect();
-      const menuRect = menuRef.current?.getBoundingClientRect();
-      const newPosition = CALCULATE_MENU_POSITION(
-        triggerRect,
-        menuRect,
-        direction,
-        menuWidth,
-        0
-      );
-      setPosition(newPosition);
-    }, [triggerRef, direction, menuWidth, menuRef]);
+  const throttledUpdatePosition = useMemo(
+    () => THROTTLE(updatePosition, 16),
+    [updatePosition]
+  );
 
-    const throttledUpdatePosition = useMemo(
-      () => THROTTLE(updatePosition, 16),
-      [updatePosition]
-    );
+  useEffect(() => {
+    if (!triggerRef?.current) return;
 
-    useEffect(() => {
-      if (!triggerRef?.current) return;
+    updatePosition();
+    const timeoutId = setTimeout(updatePosition, 0);
 
-      updatePosition();
-      const timeoutId = setTimeout(updatePosition, 0);
+    window.addEventListener("scroll", throttledUpdatePosition, true);
+    window.addEventListener("resize", throttledUpdatePosition);
 
-      window.addEventListener("scroll", throttledUpdatePosition, true);
-      window.addEventListener("resize", throttledUpdatePosition);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("scroll", throttledUpdatePosition, true);
+      window.removeEventListener("resize", throttledUpdatePosition);
+    };
+  }, [triggerRef, throttledUpdatePosition, updatePosition, mounted]);
 
-      return () => {
-        clearTimeout(timeoutId);
-        window.removeEventListener("scroll", throttledUpdatePosition, true);
-        window.removeEventListener("resize", throttledUpdatePosition);
-      };
-    }, [triggerRef, throttledUpdatePosition, updatePosition, mounted]);
+  useEffect(() => {
+    if (focusedIndex >= 0 && focusedItemRef.current) {
+      focusedItemRef.current.scrollIntoView({
+        block: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }, [focusedIndex]);
 
-    useEffect(() => {
-      if (focusedIndex >= 0 && focusedItemRef.current) {
-        focusedItemRef.current.scrollIntoView({
-          block: "nearest",
-          behavior: "smooth",
-        });
-      }
-    }, [focusedIndex]);
+  const optionsContainerRef = useRef(null);
+  useMenuOptionsAnimation(optionsContainerRef, true);
 
-    const optionsContainerRef = useRef(null);
-    useMenuOptionsAnimation(optionsContainerRef, true);
-
-    const menuContent = (
+  const menuContent = (
+    <div
+      style={{
+        position: "absolute",
+        top: `${position.top}px`,
+        left: `${position.left}px`,
+        width: position.width ? `${position.width}px` : "auto",
+        transform: position.transform,
+        zIndex: 100,
+      }}
+    >
       <div
-        style={{
-          position: "absolute",
-          top: `${position.top}px`,
-          left: `${position.left}px`,
-          width: position.width ? `${position.width}px` : "auto",
-          transform: position.transform,
-          zIndex: 100,
-        }}
+        ref={menuRef}
+        className={CN(
+          "border-default/10 bg-default/5 overflow-hidden border p-1 backdrop-blur-xl",
+          rounded && `rounded-${rounded}`,
+          !noGlass
+            ? COMPONENT_STYLES.blur.enabled
+            : COMPONENT_STYLES.blur.disabled
+        )}
+        role="listbox"
+        aria-label="Options"
       >
-        <div
-          ref={menuRef}
-          className={CN(
-            "border-default/10 bg-default/5 overflow-hidden border p-1 backdrop-blur-xl",
-            rounded && `rounded-${rounded}`,
-            !noGlass
-              ? COMPONENT_STYLES.blur.enabled
-              : COMPONENT_STYLES.blur.disabled
-          )}
-          role="listbox"
-          aria-label="Options"
-        >
-          {showSearch && (
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className={CN(
-                "p-2.5 transition-colors bg-black/40",
-                "hover:bg-default/5 focus:bg-default/5",
-                GET_ROUNDED_CLASS(nextRounded, "top")
-              )}
-            >
-              <input
-                className={CN("w-full bg-transparent outline-none")}
-                placeholder="Search in options"
-                onChange={handleSearchChange}
-                value={searchQuery}
-                type="text"
-                autoFocus
-                aria-label="Search options"
-              />
-            </div>
-          )}
+        {showSearch && (
           <div
-            ref={optionsContainerRef}
+            onClick={(e) => e.stopPropagation()}
             className={CN(
-              CONFIG.menu.maxHeight +
-                " space-y-0.5 overflow-x-hidden overflow-y-auto",
-              rounded && `rounded-b-${nextRounded}`,
-              showSearch && "mt-0.5"
+              "p-2.5 transition-colors bg-black/40",
+              "hover:bg-default/5 focus:bg-default/5",
+              GET_ROUNDED_CLASS(nextRounded, "top")
             )}
           >
-            {options.length === 0 ? (
-              <div
-                className={CN(
-                  "cursor-not-allowed bg-black/40 p-2.5 transition-colors",
-                  sizeConfig.text,
-                  showSearch
-                    ? GET_ROUNDED_CLASS(nextRounded, "bottom")
-                    : GET_ROUNDED_CLASS(nextRounded, "full")
-                )}
-              >
-                <span className="text-sm opacity-70">No options found</span>
-              </div>
-            ) : (
-              options.map((option, index) => {
-                const isFocused = index === focusedIndex;
-                const isSelected = selectedOption?.value === option.value;
-
-                return (
-                  <SelectboxOption
-                    key={option.value}
-                    option={option}
-                    index={index}
-                    totalCount={options.length}
-                    isFocused={isFocused}
-                    isSelected={isSelected}
-                    onSelect={onSelect}
-                    sizeConfig={sizeConfig}
-                    rounded={nextRounded}
-                    showSearch={showSearch}
-                    focusedItemRef={focusedItemRef}
-                  />
-                );
-              })
-            )}
+            <input
+              className={CN("w-full bg-transparent outline-none")}
+              placeholder="Search in options"
+              onChange={handleSearchChange}
+              value={searchQuery}
+              type="text"
+              autoFocus
+              aria-label="Search options"
+            />
           </div>
+        )}
+        <div
+          ref={optionsContainerRef}
+          className={CN(
+            CONFIG.menu.maxHeight +
+              " space-y-0.5 overflow-x-hidden overflow-y-auto",
+            rounded && `rounded-b-${nextRounded}`,
+            showSearch && "mt-0.5"
+          )}
+        >
+          {options.length === 0 ? (
+            <div
+              className={CN(
+                "cursor-not-allowed bg-black/40 p-2.5 transition-colors",
+                sizeConfig.text,
+                showSearch
+                  ? GET_ROUNDED_CLASS(nextRounded, "bottom")
+                  : GET_ROUNDED_CLASS(nextRounded, "full")
+              )}
+            >
+              <span className="text-sm opacity-70">No options found</span>
+            </div>
+          ) : (
+            options.map((option, index) => {
+              const isFocused = index === focusedIndex;
+              const isSelected = selectedOption?.value === option.value;
+
+              return (
+                <SelectboxOption
+                  key={option.value}
+                  data={{
+                    option,
+                    index,
+                    totalCount: options.length,
+                    isFocused,
+                    isSelected,
+                  }}
+                  visuals={{
+                    sizeConfig,
+                    rounded: nextRounded,
+                    showSearch,
+                    focusedItemRef,
+                  }}
+                  controls={{ onSelect }}
+                />
+              );
+            })
+          )}
         </div>
       </div>
-    );
+    </div>
+  );
 
-    if (typeof window === "undefined" || !mounted) return null;
+  if (typeof window === "undefined" || !mounted) return null;
 
-    return createPortal(menuContent, document.body);
-  }
-);
+  return createPortal(menuContent, document.body);
+}, arePropsEqual);
 
-const SelectboxValue = memo(
-  ({
-    selectedOption,
-    textClassName,
-    iconClassName,
-    description,
-    placeholder,
-    rounded,
-    loading,
-    color,
-    isOpen,
-    icon,
-    text,
-  }) => {
-    const iconRounded = rounded ? GET_NEXT_ROUNDED_LEVEL(rounded) : undefined;
+const SelectboxValue = memo(({ data, visuals }) => {
+  const { selectedOption, description, placeholder, loading, text, icon } =
+    data;
+  const { textClassName, iconClassName, rounded, color, isOpen } = visuals;
 
-    return (
-      <>
-        {icon && (
-          <IconWrapper
-            className={CN(
+  const iconRounded = rounded ? GET_NEXT_ROUNDED_LEVEL(rounded) : undefined;
+
+  return (
+    <>
+      {icon && (
+        <IconWrapper
+          data={{ icon: selectedOption?.icon || icon, loading }}
+          visuals={{
+            rounded: iconRounded,
+            color,
+            className: CN(
               isOpen
                 ? "bg-primary text-white"
                 : "bg-default/5 group-hover:bg-primary transition group-hover:text-white",
               "center h-full shrink-0",
               iconClassName
-            )}
-            rounded={iconRounded}
-            loading={loading}
-            color={color}
-            icon={icon}
-          />
-        )}
-        <div className="flex w-full flex-col items-start justify-center -space-y-0.5 px-3">
-          <div
-            className={CN(
-              "w-full appearance-none bg-transparent outline-none",
-              description && "font-semibold",
-              !selectedOption && "opacity-50",
-              textClassName
-            )}
-          >
-            {selectedOption?.label || text || placeholder || "Select an option"}
-          </div>
-          {description && (
-            <span className="text-xs opacity-70">{description}</span>
-          )}
-        </div>
-      </>
-    );
-  }
-);
-
-export const Selectbox = memo(
-  forwardRef(
-    (
-      {
-        rounded = "secondary",
-        direction = "top",
-        loading = false,
-        noGlass = false,
-        disabled = false,
-        options = [],
-        description,
-        placeholder,
-        size = "md",
-        className,
-        menuWidth,
-        onChange,
-        color,
-        value,
-        text,
-        icon,
-        ...props
-      },
-      ref
-    ) => {
-      const {
-        filteredOptions,
-        selectedOption,
-        setSearchQuery,
-        handleSelect,
-        searchQuery,
-        toggleMenu,
-        closeMenu,
-        selectRef,
-        menuRef,
-        isOpen,
-      } = useSelectbox(options, onChange, value);
-
-      // Merge refs (internal selectRef and external ref)
-      useEffect(() => {
-        if (ref) {
-          if (typeof ref === "function") {
-            ref(selectRef.current);
-          } else {
-            ref.current = selectRef.current;
-          }
-        }
-      }, [ref, selectRef]);
-
-      const { focusedIndex } = useKeyboardNavigation(
-        filteredOptions,
-        isOpen,
-        handleSelect,
-        closeMenu
-      );
-
-      const sizeConfig = SIZE_CONFIGURATIONS[size];
-
-      const handleToggle = useCallback(
-        (e) => {
-          if (!disabled) {
-            toggleMenu(e);
-          }
-        },
-        [disabled, toggleMenu]
-      );
-
-      const [renderMenu, setRenderMenu] = useState(isOpen);
-
-      useEffect(() => {
-        if (isOpen) setRenderMenu(true);
-      }, [isOpen]);
-
-      const handleAnimationComplete = useCallback(() => {
-        if (!isOpen) setRenderMenu(false);
-      }, [isOpen]);
-
-      return (
+            ),
+          }}
+        />
+      )}
+      <div className="flex w-full flex-col items-start justify-center -space-y-0.5 px-3">
         <div
           className={CN(
-            COMPONENT_STYLES.base,
-            rounded && `rounded-${rounded}`,
-            sizeConfig.button.withText,
-            "relative cursor-pointer",
-            isOpen ? "z-20" : "z-10",
-            !noGlass
-              ? COMPONENT_STYLES.blur.enabled
-              : COMPONENT_STYLES.blur.disabled,
-            className,
-            isOpen && "border-primary",
-            disabled && COMPONENT_STYLES.shared.disabled
+            "w-full appearance-none bg-transparent outline-none",
+            description && "font-semibold",
+            !selectedOption && "opacity-50",
+            textClassName
           )}
-          aria-label={text || description || "Select option"}
-          onClick={handleToggle}
-          ref={selectRef}
-          role="combobox"
-          aria-expanded={isOpen}
-          aria-haspopup="listbox"
-          aria-disabled={disabled}
-          aria-controls={isOpen ? "selectbox-menu" : undefined}
-          {...props}
         >
-          <SelectboxValue
-            selectedOption={selectedOption}
-            iconClassName={sizeConfig.icon}
-            textClassName={sizeConfig.text}
-            description={description}
-            placeholder={placeholder}
-            rounded={rounded}
-            loading={loading}
-            isOpen={isOpen}
-            color={color}
-            icon={selectedOption?.icon || icon}
-            text={text}
-          />
-          {renderMenu && (
-            <SelectboxMenu
-              isOpen={isOpen}
-              onAnimationComplete={handleAnimationComplete}
-              onSearchChange={setSearchQuery}
-              totalOptions={options.length}
-              searchQuery={searchQuery}
-              options={filteredOptions}
-              onSelect={handleSelect}
-              direction={direction}
-              menuWidth={menuWidth}
-              rounded={rounded}
-              triggerRef={selectRef}
-              menuRef={menuRef}
-              noGlass={noGlass}
-              size={size}
-              focusedIndex={focusedIndex}
-              selectedOption={selectedOption}
-            />
-          )}
+          {selectedOption?.label || text || placeholder || "Select an option"}
         </div>
-      );
-    }
-  )
+        {description && (
+          <span className="text-xs opacity-70">{description}</span>
+        )}
+      </div>
+    </>
+  );
+}, arePropsEqual);
+
+export const Selectbox = memo(
+  forwardRef(({ data = {}, visuals = {}, controls = {} }, ref) => {
+    const {
+      options = [],
+      description,
+      placeholder,
+      value,
+      text,
+      icon,
+      loading = false,
+    } = data;
+    const {
+      rounded = "secondary",
+      direction = "top",
+      noGlass = false,
+      size = "md",
+      className,
+      menuWidth,
+      color,
+    } = visuals;
+    const { onChange, disabled = false, ...restControls } = controls;
+
+    const {
+      filteredOptions,
+      selectedOption,
+      setSearchQuery,
+      handleSelect,
+      searchQuery,
+      toggleMenu,
+      closeMenu,
+      selectRef,
+      menuRef,
+      isOpen,
+    } = useSelectbox(options, onChange, value);
+
+    useEffect(() => {
+      if (ref) {
+        if (typeof ref === "function") {
+          ref(selectRef.current);
+        } else {
+          ref.current = selectRef.current;
+        }
+      }
+    }, [ref, selectRef]);
+
+    const { focusedIndex } = useKeyboardNavigation(
+      filteredOptions,
+      isOpen,
+      handleSelect,
+      closeMenu
+    );
+
+    const sizeConfig = SIZE_CONFIGURATIONS[size];
+
+    const handleToggle = useCallback(
+      (e) => {
+        if (!disabled) {
+          toggleMenu(e);
+        }
+      },
+      [disabled, toggleMenu]
+    );
+
+    const [renderMenu, setRenderMenu] = useState(isOpen);
+
+    useEffect(() => {
+      if (isOpen) setRenderMenu(true);
+    }, [isOpen]);
+
+    const handleAnimationComplete = useCallback(() => {
+      if (!isOpen) setRenderMenu(false);
+    }, [isOpen]);
+
+    return (
+      <div
+        className={CN(
+          COMPONENT_STYLES.base,
+          rounded && `rounded-${rounded}`,
+          sizeConfig.button.withText,
+          "relative cursor-pointer",
+          isOpen ? "z-20" : "z-10",
+          !noGlass
+            ? COMPONENT_STYLES.blur.enabled
+            : COMPONENT_STYLES.blur.disabled,
+          className,
+          isOpen && "border-primary",
+          disabled && COMPONENT_STYLES.shared.disabled
+        )}
+        aria-label={text || description || "Select option"}
+        onClick={handleToggle}
+        ref={selectRef}
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-disabled={disabled}
+        aria-controls={isOpen ? "selectbox-menu" : undefined}
+        {...restControls}
+      >
+        <SelectboxValue
+          data={{
+            selectedOption,
+            description,
+            placeholder,
+            loading,
+            text,
+            icon,
+          }}
+          visuals={{
+            textClassName: sizeConfig.text,
+            iconClassName: sizeConfig.icon,
+            rounded,
+            color,
+            isOpen,
+          }}
+        />
+        {renderMenu && (
+          <SelectboxMenu
+            data={{
+              totalOptions: options.length,
+              searchQuery,
+              options: filteredOptions,
+              focusedIndex,
+              selectedOption,
+              isOpen,
+            }}
+            visuals={{
+              direction,
+              menuWidth,
+              rounded,
+              menuRef,
+              triggerRef: selectRef,
+              noGlass,
+              size,
+            }}
+            controls={{
+              onAnimationComplete: handleAnimationComplete,
+              onSearchChange: setSearchQuery,
+              onSelect: handleSelect,
+            }}
+          />
+        )}
+      </div>
+    );
+  }),
+  arePropsEqual
 );
 
 Selectbox.displayName = "Selectbox";

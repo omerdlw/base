@@ -30,7 +30,6 @@ export default function TestUIPage() {
     nav,
   });
 
-  // State management
   const [toggleState, setToggleState] = useState({
     sm: false,
     md: true,
@@ -60,15 +59,8 @@ export default function TestUIPage() {
 
   return (
     <Template>
-      <div
-        style={{
-          backgroundImage:
-            "url(https://wallpaper.forfun.com/fetch/bd/bd286d338ecdb4785174e5050f67c65d.jpeg?w=1470&r=0.5625&f=webp)",
-        }}
-        className="w-screen h-screen -z-10 fixed inset-0 bg-cover bg-center bg-no-repeat"
-      ></div>
+      <div className="w-screen h-screen -z-10 fixed inset-0 bg-cover bg-center bg-no-repeat"></div>
       <div className="w-full h-screen scroll-auto p-8 pb-32 space-y-12 overflow-y-auto">
-        {/* BUTTONS */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
             Buttons
@@ -80,9 +72,9 @@ export default function TestUIPage() {
                 Sizes
               </h3>
               <div className="flex flex-wrap items-center gap-3">
-                <Button size="sm" text="Small" />
-                <Button size="md" text="Medium" />
-                <Button size="lg" text="Large" />
+                <Button data={{ text: "Small" }} visuals={{ size: "sm" }} />
+                <Button data={{ text: "Medium" }} visuals={{ size: "md" }} />
+                <Button data={{ text: "Large" }} visuals={{ size: "lg" }} />
               </div>
             </div>
 
@@ -91,9 +83,15 @@ export default function TestUIPage() {
                 Styles
               </h3>
               <div className="flex flex-wrap items-center gap-3">
-                <Button text="Default" />
-                <Button text="No Glass" noGlass />
-                <Button text="Tinted" tinted icon="solar:star-bold" />
+                <Button data={{ text: "Default" }} />
+                <Button
+                  data={{ text: "No Glass" }}
+                  visuals={{ noGlass: true }}
+                />
+                <Button
+                  data={{ text: "Tinted", icon: "solar:star-bold" }}
+                  visuals={{ tinted: true }}
+                />
               </div>
             </div>
 
@@ -102,10 +100,19 @@ export default function TestUIPage() {
                 States
               </h3>
               <div className="flex flex-wrap items-center gap-3">
-                <Button text="Loading" loading />
-                <Button icon="solar:add-circle-bold" text="Loading" loading />
-                <Button text="Disabled" disabled />
-                <Button icon="solar:settings-bold" />
+                <Button data={{ text: "Loading", loading: true }} />
+                <Button
+                  data={{
+                    text: "Loading",
+                    loading: true,
+                    icon: "solar:add-circle-bold",
+                  }}
+                />
+                <Button
+                  data={{ text: "Disabled" }}
+                  controls={{ disabled: true }}
+                />
+                <Button data={{ icon: "solar:settings-bold" }} />
               </div>
             </div>
 
@@ -114,10 +121,22 @@ export default function TestUIPage() {
                 Rounded
               </h3>
               <div className="flex flex-wrap items-center gap-3">
-                <Button text="Pri" rounded="primary" size="sm" />
-                <Button text="Sec" rounded="secondary" size="sm" />
-                <Button text="Ter" rounded="tertiary" size="sm" />
-                <Button text="Full" className="rounded-full" size="sm" />
+                <Button
+                  data={{ text: "Pri" }}
+                  visuals={{ rounded: "primary", size: "sm" }}
+                />
+                <Button
+                  data={{ text: "Sec" }}
+                  visuals={{ rounded: "secondary", size: "sm" }}
+                />
+                <Button
+                  data={{ text: "Ter" }}
+                  visuals={{ rounded: "tertiary", size: "sm" }}
+                />
+                <Button
+                  data={{ text: "Full" }}
+                  visuals={{ className: "rounded-full", size: "sm" }}
+                />
               </div>
             </div>
           </div>
@@ -127,18 +146,21 @@ export default function TestUIPage() {
               With Description
             </h3>
             <div className="flex flex-wrap items-center gap-3">
-              <Button text="Action" description="Click to perform" />
               <Button
-                text="Tinted"
-                description="With description"
-                tinted
-                icon="solar:bolt-bold"
+                data={{ text: "Action", description: "Click to perform" }}
+              />
+              <Button
+                data={{
+                  text: "Tinted",
+                  description: "With description",
+                  icon: "solar:bolt-bold",
+                }}
+                visuals={{ tinted: true }}
               />
             </div>
           </div>
         </section>
 
-        {/* INPUTS */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
             Inputs
@@ -150,17 +172,29 @@ export default function TestUIPage() {
                 Variants
               </h3>
               <Input
-                label="Default Input"
-                placeholder="Type something..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                data={{
+                  label: "Default Input",
+                  placeholder: "Type something...",
+                  value: inputValue,
+                }}
+                controls={{
+                  onChange: (e) => setInputValue(e.target.value),
+                }}
               />
-              <Input label="No Glass" noGlass placeholder="Solid background" />
               <Input
-                label="No Border"
-                noBorder
-                placeholder="Clean look"
-                icon="solar:magnifer-linear"
+                data={{
+                  label: "No Glass",
+                  placeholder: "Solid background",
+                }}
+                visuals={{ noGlass: true }}
+              />
+              <Input
+                data={{
+                  label: "No Border",
+                  placeholder: "Clean look",
+                  icon: "solar:magnifer-linear",
+                }}
+                visuals={{ noBorder: true }}
               />
             </div>
 
@@ -168,14 +202,25 @@ export default function TestUIPage() {
               <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
                 States & Validation
               </h3>
-              <Input label="Required" required placeholder="Required field" />
               <Input
-                label="Error State"
-                error="Invalid email address"
-                value="wrong@input"
-                onChange={() => {}}
+                data={{
+                  label: "Required",
+                  placeholder: "Required field",
+                  required: true,
+                }}
               />
-              <Input label="Disabled" disabled value="Locked value" />
+              <Input
+                data={{
+                  label: "Error State",
+                  error: "Invalid email address",
+                  value: "wrong@input",
+                }}
+                controls={{ onChange: () => {} }}
+              />
+              <Input
+                data={{ label: "Disabled", value: "Locked value" }}
+                controls={{ disabled: true }}
+              />
             </div>
 
             <div className="space-y-4">
@@ -183,25 +228,30 @@ export default function TestUIPage() {
                 Sizes & Icons
               </h3>
               <Input
-                size="sm"
-                placeholder="Small Input"
-                icon="solar:pen-new-square-linear"
+                data={{
+                  placeholder: "Small Input",
+                  icon: "solar:pen-new-square-linear",
+                }}
+                visuals={{ size: "sm" }}
               />
               <Input
-                size="md"
-                placeholder="Medium Input"
-                icon="solar:pen-new-square-linear"
+                data={{
+                  placeholder: "Medium Input",
+                  icon: "solar:pen-new-square-linear",
+                }}
+                visuals={{ size: "md" }}
               />
               <Input
-                size="lg"
-                placeholder="Large Input"
-                icon="solar:pen-new-square-linear"
+                data={{
+                  placeholder: "Large Input",
+                  icon: "solar:pen-new-square-linear",
+                }}
+                visuals={{ size: "lg" }}
               />
             </div>
           </div>
         </section>
 
-        {/* SELECTBOX */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
             Selectbox
@@ -213,10 +263,12 @@ export default function TestUIPage() {
                 Default
               </h3>
               <Selectbox
-                options={dummyOptions}
-                onChange={setSelectedOption}
-                value={selectedOption?.value}
-                placeholder="Choose option"
+                data={{
+                  options: dummyOptions,
+                  value: selectedOption?.value,
+                  placeholder: "Choose option",
+                }}
+                controls={{ onChange: setSelectedOption }}
               />
             </div>
 
@@ -225,10 +277,12 @@ export default function TestUIPage() {
                 No Glass & Icon
               </h3>
               <Selectbox
-                noGlass
-                icon="solar:widget-bold"
-                options={dummyOptions}
-                text="With Icon"
+                data={{
+                  icon: "solar:widget-bold",
+                  options: dummyOptions,
+                  text: "With Icon",
+                }}
+                visuals={{ noGlass: true }}
               />
             </div>
 
@@ -236,144 +290,151 @@ export default function TestUIPage() {
               <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
                 Small
               </h3>
-              <Selectbox size="sm" options={dummyOptions} placeholder="Small" />
+              <Selectbox
+                data={{ options: dummyOptions, placeholder: "Small" }}
+                visuals={{ size: "sm" }}
+              />
             </div>
 
             <div className="space-y-3">
               <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
                 Disabled
               </h3>
-              <Selectbox disabled placeholder="Locked" />
+              <Selectbox
+                data={{ placeholder: "Locked" }}
+                controls={{ disabled: true }}
+              />
             </div>
           </div>
         </section>
 
-        {/* TOGGLES, CHECKBOXES, RADIOS */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
             Toggles, Checkboxes & Radios
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {/* Toggles */}
             <div className="space-y-4">
               <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
                 Toggles
               </h3>
               <div className="space-y-3">
                 <ToggleSwitch
-                  size="sm"
-                  label="Small Toggle"
-                  checked={toggleState.sm}
-                  onChange={(checked) =>
-                    setToggleState((p) => ({ ...p, sm: checked }))
-                  }
+                  data={{ label: "Small Toggle", checked: toggleState.sm }}
+                  visuals={{ size: "sm" }}
+                  controls={{
+                    onChange: (v) => setToggleState((p) => ({ ...p, sm: v })),
+                  }}
                 />
                 <ToggleSwitch
-                  size="md"
-                  label="Medium Toggle"
-                  checked={toggleState.md}
-                  onChange={(checked) =>
-                    setToggleState((p) => ({ ...p, md: checked }))
-                  }
+                  data={{ label: "Medium Toggle", checked: toggleState.md }}
+                  visuals={{ size: "md" }}
+                  controls={{
+                    onChange: (v) => setToggleState((p) => ({ ...p, md: v })),
+                  }}
                 />
                 <ToggleSwitch
-                  size="lg"
-                  label="Large Toggle"
-                  checked={toggleState.lg}
-                  onChange={(checked) =>
-                    setToggleState((p) => ({ ...p, lg: checked }))
-                  }
+                  data={{ label: "Large Toggle", checked: toggleState.lg }}
+                  visuals={{ size: "lg" }}
+                  controls={{
+                    onChange: (v) => setToggleState((p) => ({ ...p, lg: v })),
+                  }}
                 />
                 <ToggleSwitch
-                  label="Disabled Toggle"
-                  checked={toggleState.disabled}
-                  disabled
-                  onChange={() => {}}
+                  data={{
+                    label: "Disabled Toggle",
+                    checked: toggleState.disabled,
+                  }}
+                  controls={{ disabled: true, onChange: () => {} }}
                 />
               </div>
             </div>
 
-            {/* Checkboxes */}
             <div className="space-y-4">
               <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
                 Checkboxes
               </h3>
               <div className="space-y-3">
                 <Checkbox
-                  size="sm"
-                  label="Small Checkbox"
-                  checked={checkboxState.sm}
-                  onChange={(checked) =>
-                    setCheckboxState((p) => ({ ...p, sm: checked }))
-                  }
+                  data={{ label: "Small Checkbox", checked: checkboxState.sm }}
+                  visuals={{ size: "sm" }}
+                  controls={{
+                    onChange: (v) => setCheckboxState((p) => ({ ...p, sm: v })),
+                  }}
                 />
                 <Checkbox
-                  size="md"
-                  label="Medium Checkbox"
-                  checked={checkboxState.md}
-                  onChange={(checked) =>
-                    setCheckboxState((p) => ({ ...p, md: checked }))
-                  }
+                  data={{
+                    label: "Medium Checkbox",
+                    checked: checkboxState.md,
+                  }}
+                  visuals={{ size: "md" }}
+                  controls={{
+                    onChange: (v) => setCheckboxState((p) => ({ ...p, md: v })),
+                  }}
                 />
                 <Checkbox
-                  size="lg"
-                  label="Large Checkbox"
-                  checked={checkboxState.lg}
-                  onChange={(checked) =>
-                    setCheckboxState((p) => ({ ...p, lg: checked }))
-                  }
+                  data={{ label: "Large Checkbox", checked: checkboxState.lg }}
+                  visuals={{ size: "lg" }}
+                  controls={{
+                    onChange: (v) => setCheckboxState((p) => ({ ...p, lg: v })),
+                  }}
                 />
                 <Checkbox
-                  label="Disabled Checkbox"
-                  checked={checkboxState.disabled}
-                  disabled
-                  onChange={() => {}}
+                  data={{
+                    label: "Disabled Checkbox",
+                    checked: checkboxState.disabled,
+                  }}
+                  controls={{ disabled: true, onChange: () => {} }}
                 />
               </div>
             </div>
 
-            {/* Radios */}
             <div className="space-y-4">
               <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
                 Radios
               </h3>
               <div className="space-y-3">
                 <Radio
-                  name="radio-group"
-                  value="1"
-                  label="Option 1"
-                  checked={radioValue === "1"}
-                  onChange={setRadioValue}
+                  data={{
+                    name: "radio-group",
+                    value: "1",
+                    label: "Option 1",
+                    checked: radioValue === "1",
+                  }}
+                  controls={{ onChange: setRadioValue }}
                 />
                 <Radio
-                  name="radio-group"
-                  value="2"
-                  label="Option 2"
-                  checked={radioValue === "2"}
-                  onChange={setRadioValue}
+                  data={{
+                    name: "radio-group",
+                    value: "2",
+                    label: "Option 2",
+                    checked: radioValue === "2",
+                  }}
+                  controls={{ onChange: setRadioValue }}
                 />
                 <Radio
-                  name="radio-group"
-                  value="3"
-                  label="Option 3"
-                  checked={radioValue === "3"}
-                  onChange={setRadioValue}
+                  data={{
+                    name: "radio-group",
+                    value: "3",
+                    label: "Option 3",
+                    checked: radioValue === "3",
+                  }}
+                  controls={{ onChange: setRadioValue }}
                 />
                 <Radio
-                  name="radio-group-disabled"
-                  value="4"
-                  label="Disabled Option"
-                  checked={true}
-                  disabled
-                  onChange={() => {}}
+                  data={{
+                    name: "radio-group-disabled",
+                    value: "4",
+                    label: "Disabled Option",
+                    checked: true,
+                  }}
+                  controls={{ disabled: true, onChange: () => {} }}
                 />
               </div>
             </div>
           </div>
         </section>
 
-        {/* TOOLTIPS & COLOR PICKER */}
         <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
             Tooltips & Color Picker
@@ -385,21 +446,36 @@ export default function TestUIPage() {
                 Tooltips
               </h3>
               <div className="flex flex-wrap gap-4">
-                <Tooltip content="Top Tooltip" position="top">
-                  <Button text="Top" size="sm" />
+                <Tooltip
+                  data={{ content: "Top Tooltip" }}
+                  visuals={{ position: "top" }}
+                >
+                  <Button data={{ text: "Top" }} visuals={{ size: "sm" }} />
                 </Tooltip>
-                <Tooltip content="Bottom Tooltip" position="bottom">
-                  <Button text="Bottom" size="sm" />
+                <Tooltip
+                  data={{ content: "Bottom Tooltip" }}
+                  visuals={{ position: "bottom" }}
+                >
+                  <Button data={{ text: "Bottom" }} visuals={{ size: "sm" }} />
                 </Tooltip>
-                <Tooltip content="Left Tooltip" position="left">
-                  <Button text="Left" size="sm" />
+                <Tooltip
+                  data={{ content: "Left Tooltip" }}
+                  visuals={{ position: "left" }}
+                >
+                  <Button data={{ text: "Left" }} visuals={{ size: "sm" }} />
                 </Tooltip>
-                <Tooltip content="Right Tooltip" position="right">
-                  <Button text="Right" size="sm" />
+                <Tooltip
+                  data={{ content: "Right Tooltip" }}
+                  visuals={{ position: "right" }}
+                >
+                  <Button data={{ text: "Right" }} visuals={{ size: "sm" }} />
                 </Tooltip>
               </div>
               <div className="mt-4">
-                <Tooltip content="Info tooltip on icon" position="right">
+                <Tooltip
+                  data={{ content: "Info tooltip on icon" }}
+                  visuals={{ position: "right" }}
+                >
                   <div className="p-3 bg-default/10 rounded-full w-fit cursor-help hover:bg-default/20 transition">
                     <Icon icon="solar:info-circle-bold" className="text-xl" />
                   </div>
@@ -413,9 +489,11 @@ export default function TestUIPage() {
               </h3>
               <div className="max-w-md p-4 border border-default/10 rounded-primary bg-black/20 backdrop-blur-md">
                 <ColorPicker
-                  value={color}
-                  onChange={setColor}
-                  presets={["#3aa7d6", "#e00f5c", "#8fe00f", "#e08f0f"]}
+                  data={{
+                    value: color,
+                    presets: ["#3aa7d6", "#e00f5c", "#8fe00f", "#e08f0f"],
+                  }}
+                  controls={{ onChange: setColor }}
                 />
                 <div className="mt-4 flex items-center gap-3 text-sm border-t border-default/10 pt-3">
                   <span className="opacity-70">Selected Color:</span>

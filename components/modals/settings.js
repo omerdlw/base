@@ -23,9 +23,12 @@ export default function SettingsModal({ header, close }) {
             </span>
           </div>
           <ColorPicker
-            value={theme.primary}
-            onChange={setPrimaryColor}
-            presets={presets.colors}
+            data={{
+              value: theme.primary,
+            }}
+            controls={{
+              onChange: setPrimaryColor,
+            }}
           />
         </div>
         <div className="space-y-4">

@@ -2,90 +2,63 @@
 
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { useRef } from "react";
 
-/**
- * Adds a subtle scale effect on hover.
- * @param {React.RefObject} ref - The element to animate
- * @param {boolean} disabled - Whether animation should be disabled
- */
-export const useHoverEffect = (ref, disabled = false) => {
-  useGSAP(() => {
+export const useHoverAnimation = (ref, disabled = false) => {
+  const { contextSafe } = useGSAP({ scope: ref });
+
+  const onMouseEnter = contextSafe(() => {
     if (disabled || !ref.current) return;
-
-    const el = ref.current;
-
-    // Set will-change to hint browser for optimization
-    gsap.set(el, { willChange: "transform" });
-
-    const animation = gsap.to(el, {
-      scale: 1.05, // Slightly increased scale for better visibility
-      duration: 0.4, // Slower duration
-      paused: true,
+    gsap.to(ref.current, {
+      scale: 1.05,
+      duration: 0.3,
       ease: "power2.out",
-      force3D: true, // Force hardware acceleration
+      overwrite: "auto",
+      force3D: true,
     });
+  });
 
-    const onEnter = () => animation.play();
-    const onLeave = () => animation.reverse();
-
-    el.addEventListener("mouseenter", onEnter);
-    el.addEventListener("mouseleave", onLeave);
-
-    return () => {
-      el.removeEventListener("mouseenter", onEnter);
-      el.removeEventListener("mouseleave", onLeave);
-      // Clean up will-change
-      gsap.set(el, { willChange: "auto" });
-    };
-  }, [disabled, ref]);
-};
-
-/**
- * Adds a press-down scale effect on click.
- * @param {React.RefObject} ref - The element to animate
- * @param {boolean} disabled - Whether animation should be disabled
- */
-export const useClickEffect = (ref, disabled = false) => {
-  useGSAP(() => {
+  const onMouseLeave = contextSafe(() => {
     if (disabled || !ref.current) return;
+    gsap.to(ref.current, {
+      scale: 1,
+      duration: 0.3,
+      ease: "power2.out",
+      overwrite: "auto",
+      force3D: true,
+    });
+  });
 
-    const el = ref.current;
-
-    const onDown = () => {
-      gsap.to(el, {
-        scale: 0.95,
-        duration: 0.2, // Slower
-        ease: "power2.out",
-        force3D: true,
-      });
-    };
-
-    const onUp = () => {
-      gsap.to(el, {
-        scale: 1, // Return to 1 (hover effect will take over if still hovering)
-        duration: 0.2, // Slower
-        ease: "power2.out",
-        force3D: true,
-      });
-    };
-
-    el.addEventListener("mousedown", onDown);
-    window.addEventListener("mouseup", onUp);
-
-    return () => {
-      el.removeEventListener("mousedown", onDown);
-      window.removeEventListener("mouseup", onUp);
-    };
-  }, [disabled, ref]);
+  return { onMouseEnter, onMouseLeave };
 };
 
-/**
- * Animates a menu opening and closing.
- * @param {React.RefObject} ref - The menu element
- * @param {boolean} isOpen - Whether the menu is open
- * @param {function} onComplete - Callback when animation completes
- */
+export const useClickAnimation = (ref, disabled = false) => {
+  const { contextSafe } = useGSAP({ scope: ref });
+
+  const onMouseDown = contextSafe(() => {
+    if (disabled || !ref.current) return;
+    gsap.to(ref.current, {
+      scale: 0.95,
+      duration: 0.15,
+      ease: "power2.out",
+      overwrite: "auto",
+      force3D: true,
+    });
+  });
+
+  const onMouseUp = contextSafe(() => {
+    if (disabled || !ref.current) return;
+    gsap.to(ref.current, {
+      scale: 1.05,
+      duration: 0.15,
+      ease: "power2.out",
+      overwrite: "auto",
+      force3D: true,
+    });
+  });
+
+  return { onMouseDown, onMouseUp };
+};
+
 export const useMenuAnimation = (ref, isOpen, onComplete) => {
   useGSAP(() => {
     if (!ref.current) return;
@@ -93,83 +66,54 @@ export const useMenuAnimation = (ref, isOpen, onComplete) => {
     if (isOpen) {
       gsap.fromTo(
         ref.current,
-        {
-          opacity: 0,
-          y: -20,
-          scale: 0.95,
-          willChange: "transform, opacity",
-        },
+        { opacity: 0, y: -15, scale: 0.98 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.4,
+          duration: 0.3,
           ease: "power3.out",
-          force3D: true,
+          overwrite: "auto",
         }
       );
     } else {
       gsap.to(ref.current, {
         opacity: 0,
         y: -10,
-        scale: 0.95,
-        duration: 0.3,
+        scale: 0.98,
+        duration: 0.2,
         ease: "power2.in",
-        force3D: true,
-        onComplete: onComplete,
+        overwrite: "auto",
+        onComplete,
       });
     }
-  }, [isOpen, ref, onComplete]);
+  }, [isOpen, onComplete]);
 };
 
-/**
- * Animates menu options with a stagger effect.
- * @param {React.RefObject} containerRef - The container of the options
- * @param {boolean} isOpen - Whether the menu is open
- */
 export const useMenuOptionsAnimation = (containerRef, isOpen) => {
   useGSAP(() => {
     if (!containerRef.current || !isOpen) return;
-
     const items = containerRef.current.children;
 
-    gsap.set(items, { opacity: 0, x: -10 });
-
-    gsap.to(items, {
-      opacity: 1,
-      x: 0,
-      duration: 0.3,
-      stagger: 0.03,
-      ease: "power2.out",
-      force3D: true,
-      delay: 0.1, // Wait slightly for menu to start opening
-    });
-  }, [isOpen, containerRef]);
+    gsap.fromTo(
+      items,
+      { opacity: 0, x: -10 },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.25,
+        stagger: 0.02,
+        ease: "power2.out",
+        delay: 0.05,
+        overwrite: "auto",
+      }
+    );
+  }, [isOpen]);
 };
 
-/**
- * Animates a toggle switch knob.
- * @param {React.RefObject} knobRef - The knob element
- * @param {boolean} checked - Whether the toggle is checked
- * @param {object} sizeConfig - Size configuration for translation distance
- */
 export const useToggleAnimation = (knobRef, checked, sizeConfig) => {
-  // We need to manually handle the translation because we are removing the class-based translation
-  // to let GSAP handle it for smoother physics.
   useGSAP(() => {
     if (!knobRef.current) return;
-
-    // Extract the numeric value from the translate class (e.g., "translate-x-6" -> 24px approx)
-    // Or better, use the sizeConfig to determine the pixel value if possible,
-    // but since we use Tailwind classes, we might want to rely on GSAP's x property.
-
-    // Alternative: We can just use the class change but add a transition.
-    // BUT the user asked for GSAP.
-
-    // Let's use a simple heuristic:
-    // sm: 20px (5 * 4)
-    // md: 24px (6 * 4)
-    // lg: 28px (7 * 4)
 
     let xVal = 0;
     if (checked) {
@@ -180,9 +124,120 @@ export const useToggleAnimation = (knobRef, checked, sizeConfig) => {
 
     gsap.to(knobRef.current, {
       x: xVal,
-      duration: 0.5, // Slower
-      ease: "power3.out", // Less bouncy, more smooth
-      force3D: true,
+      duration: 0.4,
+      ease: "power3.out",
+      overwrite: "auto",
     });
-  }, [checked, knobRef, sizeConfig]);
+  }, [checked, sizeConfig]);
+};
+
+export const useCheckboxAnimation = (checkRef, checked) => {
+  useGSAP(() => {
+    if (!checkRef.current) return;
+
+    if (checked) {
+      gsap.fromTo(
+        checkRef.current,
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.3,
+          ease: "back.out(1.7)",
+          overwrite: "auto",
+          force3D: true,
+        }
+      );
+    } else {
+      gsap.to(checkRef.current, {
+        scale: 0,
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.in",
+        overwrite: "auto",
+        force3D: true,
+      });
+    }
+  }, [checked]);
+};
+
+export const useRadioAnimation = (dotRef, checked) => {
+  useGSAP(() => {
+    if (!dotRef.current) return;
+
+    if (checked) {
+      gsap.fromTo(
+        dotRef.current,
+        { scale: 0, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 0.4,
+          ease: "elastic.out(1, 0.5)",
+          overwrite: "auto",
+          force3D: true,
+        }
+      );
+    } else {
+      gsap.to(dotRef.current, {
+        scale: 0,
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.in",
+        overwrite: "auto",
+        force3D: true,
+      });
+    }
+  }, [checked]);
+};
+
+export const useTooltipAnimation = (
+  tooltipRef,
+  containerRef,
+  disabled,
+  content
+) => {
+  useGSAP(() => {
+    if (disabled || !content || !tooltipRef.current || !containerRef.current)
+      return;
+
+    const tooltip = tooltipRef.current;
+    const container = containerRef.current;
+
+    const onEnter = () => {
+      gsap.fromTo(
+        tooltip,
+        { opacity: 0, scale: 0.95, y: 5 },
+        {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.3,
+          ease: "power2.out",
+          overwrite: "auto",
+          force3D: true,
+        }
+      );
+    };
+
+    const onLeave = () => {
+      gsap.to(tooltip, {
+        opacity: 0,
+        scale: 0.95,
+        y: 5,
+        duration: 0.2,
+        ease: "power2.in",
+        overwrite: "auto",
+        force3D: true,
+      });
+    };
+
+    container.addEventListener("mouseenter", onEnter);
+    container.addEventListener("mouseleave", onLeave);
+
+    return () => {
+      container.removeEventListener("mouseenter", onEnter);
+      container.removeEventListener("mouseleave", onLeave);
+    };
+  }, [disabled, content]);
 };
