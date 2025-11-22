@@ -2,6 +2,10 @@
 
 import { ROUNDED_CLASSES } from "./constants";
 
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
 export const IS_IMAGE_URL = (url) => {
   return Boolean(url?.startsWith("http"));
 };
@@ -43,7 +47,7 @@ export const CALCULATE_MENU_POSITION = (
     case "top":
       top = menuRect
         ? triggerRect.bottom + scrollY - menuRect.height
-        : triggerRect.bottom + scrollY - 200; // Fallback height
+        : triggerRect.bottom + scrollY - 200;
       break;
     case "left":
       left = menuRect
@@ -92,6 +96,7 @@ export const GET_ROUNDED_CLASS = (rounded, position = "full") => {
   return classes[position] || classes.full;
 };
 
+// --- Color Picker Helpers ---
 export const HEX_TO_RGB = (hex) => {
   let r = 0,
     g = 0,

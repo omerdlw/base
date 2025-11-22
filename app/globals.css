@@ -8,7 +8,7 @@
   --color-default: var(--color-default);
   --color-error: var(--color-error);
   --color-info: var(--color-info);
-  
+
   --radius-quaternary: var(--radius-quaternary);
   --radius-secondary: var(--radius-secondary);
   --radius-tertiary: var(--radius-tertiary);
@@ -24,6 +24,25 @@
 
 *::-webkit-scrollbar {
   display: none;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  @keyframes shine {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  .animate-shine {
+    animation: shine 2s linear infinite;
+  }
 }
 
 .center {

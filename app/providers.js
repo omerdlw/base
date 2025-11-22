@@ -8,6 +8,7 @@ import { ToastProvider } from "@/modules/toast/context";
 import { ThemeProvider } from "@/contexts/theme-context";
 import { RegistryProvider } from "@/modules/registry/context"; // YENİ
 import { GlobalListener } from "@/components/listener";
+import { GlobalError } from "@/components/error-boundary";
 
 const providers = [
   ThemeProvider,
@@ -20,7 +21,7 @@ const providers = [
 ];
 
 export const AppProviders = ({ children }) => {
-  return providers.reduceRight((acc, Provider) => {
+  const wrapped = providers.reduceRight((acc, Provider) => {
     if (Provider === ModalProvider) {
       return (
         <Provider>
@@ -31,4 +32,6 @@ export const AppProviders = ({ children }) => {
     }
     return <Provider>{acc}</Provider>;
   }, children);
+
+  return <GlobalError>{wrapped}</GlobalError>;
 };

@@ -42,7 +42,11 @@ export const useNavigation = () => {
   }, [dynamicNavItem]);
 
   useEffect(() => {
-    navigationItems.forEach((link) => router.prefetch(link.path));
+    navigationItems.forEach((link) => {
+      if (link.path) {
+        router.prefetch(link.path);
+      }
+    });
   }, [router, navigationItems]);
 
   useEffect(() => {

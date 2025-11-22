@@ -8,6 +8,8 @@ import {
   Input,
   Selectbox,
   ToggleSwitch,
+  Checkbox,
+  Radio,
   ColorPicker,
   Tooltip,
 } from "@/ui/elements";
@@ -33,6 +35,12 @@ export default function TestUIPage() {
     md: true,
     lg: false,
   });
+  const [checkboxState, setCheckboxState] = useState({
+    sm: false,
+    md: true,
+    lg: false,
+  });
+  const [radioValue, setRadioValue] = useState("1");
   const [inputValue, setInputValue] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
   const [color, setColor] = useState("#3aa7d6");
@@ -183,37 +191,106 @@ export default function TestUIPage() {
             Toggles & Tooltips
           </h2>
 
-          <div className="flex flex-wrap gap-8 items-center">
-            <div className="space-y-2">
-              <ToggleSwitch
-                size="sm"
-                label="Small"
-                checked={toggleState.sm}
-                onChange={(v) => setToggleState((p) => ({ ...p, sm: v }))}
-              />
-              <ToggleSwitch
-                size="md"
-                label="Medium"
-                checked={toggleState.md}
-                onChange={(v) => setToggleState((p) => ({ ...p, md: v }))}
-              />
-              <ToggleSwitch
-                size="lg"
-                label="Large"
-                checked={toggleState.lg}
-                onChange={(v) => setToggleState((p) => ({ ...p, lg: v }))}
-              />
+          <div className="flex flex-wrap gap-8 items-start">
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase">Toggles</h3>
+              <div className="space-y-2">
+                <ToggleSwitch
+                  size="sm"
+                  label="Small"
+                  checked={toggleState.sm}
+                  onChange={(checked) =>
+                    setToggleState((p) => ({ ...p, sm: checked }))
+                  }
+                />
+                <ToggleSwitch
+                  size="md"
+                  label="Medium"
+                  checked={toggleState.md}
+                  onChange={(checked) =>
+                    setToggleState((p) => ({ ...p, md: checked }))
+                  }
+                />
+                <ToggleSwitch
+                  size="lg"
+                  label="Large"
+                  checked={toggleState.lg}
+                  onChange={(checked) =>
+                    setToggleState((p) => ({ ...p, lg: checked }))
+                  }
+                />
+              </div>
             </div>
 
-            <div className="flex gap-4">
-              <Tooltip content="This is a tooltip" position="top">
-                <Button text="Hover Me (Top)" />
-              </Tooltip>
-              <Tooltip content="Bottom tooltip" position="bottom">
-                <div className="p-3 bg-default/10 rounded-secondary cursor-help">
-                  <Icon icon="solar:info-circle-bold" />
-                </div>
-              </Tooltip>
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase">Checkboxes</h3>
+              <div className="space-y-2">
+                <Checkbox
+                  size="sm"
+                  label="Small Checkbox"
+                  checked={checkboxState.sm}
+                  onChange={(checked) =>
+                    setCheckboxState((p) => ({ ...p, sm: checked }))
+                  }
+                />
+                <Checkbox
+                  size="md"
+                  label="Medium Checkbox"
+                  checked={checkboxState.md}
+                  onChange={(checked) =>
+                    setCheckboxState((p) => ({ ...p, md: checked }))
+                  }
+                />
+                <Checkbox
+                  size="lg"
+                  label="Large Checkbox"
+                  checked={checkboxState.lg}
+                  onChange={(checked) =>
+                    setCheckboxState((p) => ({ ...p, lg: checked }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase">Radios</h3>
+              <div className="space-y-2">
+                <Radio
+                  name="radio-group"
+                  value="1"
+                  label="Option 1"
+                  checked={radioValue === "1"}
+                  onChange={setRadioValue}
+                />
+                <Radio
+                  name="radio-group"
+                  value="2"
+                  label="Option 2"
+                  checked={radioValue === "2"}
+                  onChange={setRadioValue}
+                />
+                <Radio
+                  name="radio-group"
+                  value="3"
+                  label="Option 3"
+                  checked={radioValue === "3"}
+                  onChange={setRadioValue}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase">Tooltips</h3>
+              <div className="flex gap-4">
+                <Tooltip content="This is a tooltip" position="top">
+                  <Button text="Hover Me (Top)" />
+                </Tooltip>
+                <Tooltip content="Bottom tooltip" position="bottom">
+                  <div className="p-3 bg-default/10 rounded-secondary cursor-help">
+                    <Icon icon="solar:info-circle-bold" />
+                  </div>
+                </Tooltip>
+              </div>
             </div>
           </div>
         </section>

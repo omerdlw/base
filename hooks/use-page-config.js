@@ -13,12 +13,12 @@ export function usePageConfig({ nav, controls }) {
       setDynamicNavItem(nav);
     }
     return () => setDynamicNavItem(null);
-  }, [nav, setDynamicNavItem]);
+  }, [nav]);
 
   useEffect(() => {
     if (controls) {
       setControls(controls);
     }
     return () => setControls({ left: null, right: null });
-  }, [controls, setControls]);
+  }, [controls]);
 }

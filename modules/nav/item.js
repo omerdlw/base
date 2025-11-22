@@ -8,8 +8,6 @@ import { ANIMATION_PROPS } from "./utils";
 import { useModal } from "../modal/context";
 import { Sekeleton } from "@/ui/skeletons/item-nav";
 import { useActionSize } from "./hooks";
-import { RegistryInjector } from "../registry/injector";
-import SettingsModal from "@/components/modals/settings";
 
 export default function Item({
   onActionHeightChange,
@@ -49,7 +47,6 @@ export default function Item({
 
   return (
     <>
-      <RegistryInjector components={{ SETTINGS_MODAL: SettingsModal }} />
       <motion.div
         {...ANIMATION_PROPS(expanded, position, showBorder)}
         transition={{

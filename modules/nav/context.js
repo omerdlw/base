@@ -18,7 +18,7 @@ export function NavigationProvider({ children }) {
       searchQuery,
       expanded,
     }),
-    [dynamicNavItem, expanded, searchQuery, setDynamicNavItem],
+    [dynamicNavItem, expanded, searchQuery],
   );
 
   return (

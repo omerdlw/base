@@ -1,6 +1,14 @@
 "use client";
 
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  forwardRef,
+} from "react";
 import { createPortal } from "react-dom";
 import { useKeyboardNavigation, useSelectbox } from "./hooks";
 import { CN, GET_NEXT_ROUNDED_LEVEL } from "@/lib/utils";
@@ -17,6 +25,7 @@ import {
   GET_ROUNDED_CLASS,
   THROTTLE,
 } from "./utils";
+import { useMenuAnimation, useMenuOptionsAnimation } from "./use-animations";
 
 const SelectboxOption = memo(
   ({
@@ -59,8 +68,8 @@ const SelectboxOption = memo(
           "border border-transparent",
           GET_OPTION_ROUNDED_CLASS(index, totalCount, rounded, showSearch),
           sizeConfig.button.withText,
-          "hover:bg-default/10",
-          isSelected && "bg-primary/30!",
+          "hover:bg-default/10 dark:hover:bg-default/10",
+          isSelected && "bg-primary/50!",
           isFocused && "border-primary! bg-primary/10!",
           disabled && COMPONENT_STYLES.shared.disabled
         )}
@@ -110,6 +119,8 @@ const SelectboxMenu = memo(
     size,
     focusedIndex,
     selectedOption,
+    isOpen,
+    onAnimationComplete,
   }) => {
     const showSearch = totalOptions >= CONFIG.menu.searchThreshold;
     const nextRounded = GET_NEXT_ROUNDED_LEVEL(rounded);
@@ -119,6 +130,9 @@ const SelectboxMenu = memo(
     const menuRef = externalMenuRef || internalMenuRef;
     const sizeConfig = SELECTBOX_MENU_ITEM_SIZE_CONFIGURATIONS[size];
     const focusedItemRef = useRef(null);
+
+    // Animation hook
+    useMenuAnimation(menuRef, isOpen, onAnimationComplete);
 
     useEffect(() => {
       setMounted(true);
@@ -176,6 +190,9 @@ const SelectboxMenu = memo(
       }
     }, [focusedIndex]);
 
+    const optionsContainerRef = useRef(null);
+    useMenuOptionsAnimation(optionsContainerRef, true);
+
     const menuContent = (
       <div
         ref={menuRef}
@@ -216,6 +233,7 @@ const SelectboxMenu = memo(
           </div>
         )}
         <div
+          ref={optionsContainerRef}
           className={CN(
             CONFIG.menu.maxHeight +
               " space-y-0.5 overflow-x-hidden overflow-y-auto",
@@ -321,113 +339,143 @@ const SelectboxValue = memo(
 );
 
 export const Selectbox = memo(
-  ({
-    rounded = "secondary",
-    direction = "top",
-    loading = false,
-    blurry = false,
-    disabled = false,
-    options = [],
-    description,
-    placeholder,
-    size = "md",
-    className,
-    menuWidth,
-    onChange,
-    color,
-    value,
-    text,
-    icon,
-    ...props
-  }) => {
-    const {
-      filteredOptions,
-      selectedOption,
-      setSearchQuery,
-      handleSelect,
-      searchQuery,
-      toggleMenu,
-      closeMenu,
-      selectRef,
-      menuRef,
-      isOpen,
-    } = useSelectbox(options, onChange, value);
-
-    const { focusedIndex } = useKeyboardNavigation(
-      filteredOptions,
-      isOpen,
-      handleSelect,
-      closeMenu
-    );
-
-    const sizeConfig = SIZE_CONFIGURATIONS[size];
-
-    const handleToggle = useCallback(
-      (e) => {
-        if (!disabled) {
-          toggleMenu(e);
-        }
+  forwardRef(
+    (
+      {
+        rounded = "secondary",
+        direction = "top",
+        loading = false,
+        blurry = false,
+        disabled = false,
+        options = [],
+        description,
+        placeholder,
+        size = "md",
+        className,
+        menuWidth,
+        onChange,
+        color,
+        value,
+        text,
+        icon,
+        ...props
       },
-      [disabled, toggleMenu]
-    );
+      ref
+    ) => {
+      const {
+        filteredOptions,
+        selectedOption,
+        setSearchQuery,
+        handleSelect,
+        searchQuery,
+        toggleMenu,
+        closeMenu,
+        selectRef,
+        menuRef,
+        isOpen,
+      } = useSelectbox(options, onChange, value);
 
-    return (
-      <div
-        className={CN(
-          COMPONENT_STYLES.base,
-          rounded && `rounded-${rounded}`,
-          sizeConfig.button.withText,
-          "relative cursor-pointer",
-          isOpen ? "z-20" : "z-10",
-          blurry
-            ? COMPONENT_STYLES.blur.enabled
-            : COMPONENT_STYLES.blur.disabled,
-          className,
-          isOpen && "border-primary",
-          disabled && COMPONENT_STYLES.shared.disabled
-        )}
-        aria-label={text || description || "Select option"}
-        onClick={handleToggle}
-        ref={selectRef}
-        role="combobox"
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        aria-disabled={disabled}
-        aria-controls={isOpen ? "selectbox-menu" : undefined}
-        {...props}
-      >
-        <SelectboxValue
-          selectedOption={selectedOption}
-          iconClassName={sizeConfig.icon}
-          textClassName={sizeConfig.text}
-          description={description}
-          placeholder={placeholder}
-          rounded={rounded}
-          loading={loading}
-          isOpen={isOpen}
-          color={color}
-          icon={selectedOption?.icon || icon}
-          text={text}
-        />
-        {isOpen && (
-          <SelectboxMenu
-            onSearchChange={setSearchQuery}
-            totalOptions={options.length}
-            searchQuery={searchQuery}
-            options={filteredOptions}
-            onSelect={handleSelect}
-            direction={direction}
-            menuWidth={menuWidth}
-            rounded={rounded}
-            triggerRef={selectRef}
-            menuRef={menuRef}
-            blurry={blurry}
-            size={size}
-            focusedIndex={focusedIndex}
+      // Merge refs (internal selectRef and external ref)
+      useEffect(() => {
+        if (ref) {
+          if (typeof ref === "function") {
+            ref(selectRef.current);
+          } else {
+            ref.current = selectRef.current;
+          }
+        }
+      }, [ref, selectRef]);
+
+      const { focusedIndex } = useKeyboardNavigation(
+        filteredOptions,
+        isOpen,
+        handleSelect,
+        closeMenu
+      );
+
+      const sizeConfig = SIZE_CONFIGURATIONS[size];
+
+      const handleToggle = useCallback(
+        (e) => {
+          if (!disabled) {
+            toggleMenu(e);
+          }
+        },
+        [disabled, toggleMenu]
+      );
+
+      const [renderMenu, setRenderMenu] = useState(isOpen);
+
+      useEffect(() => {
+        if (isOpen) setRenderMenu(true);
+      }, [isOpen]);
+
+      const handleAnimationComplete = useCallback(() => {
+        if (!isOpen) setRenderMenu(false);
+      }, [isOpen]);
+
+      return (
+        <div
+          className={CN(
+            COMPONENT_STYLES.base,
+            rounded && `rounded-${rounded}`,
+            sizeConfig.button.withText,
+            "relative cursor-pointer",
+            isOpen ? "z-20" : "z-10",
+            blurry
+              ? COMPONENT_STYLES.blur.enabled
+              : COMPONENT_STYLES.blur.disabled,
+            className,
+            isOpen && "border-primary",
+            disabled && COMPONENT_STYLES.shared.disabled
+          )}
+          aria-label={text || description || "Select option"}
+          onClick={handleToggle}
+          ref={selectRef}
+          role="combobox"
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-disabled={disabled}
+          aria-controls={isOpen ? "selectbox-menu" : undefined}
+          {...props}
+        >
+          <SelectboxValue
             selectedOption={selectedOption}
+            iconClassName={sizeConfig.icon}
+            textClassName={sizeConfig.text}
+            description={description}
+            placeholder={placeholder}
+            rounded={rounded}
+            loading={loading}
+            isOpen={isOpen}
+            color={color}
+            icon={selectedOption?.icon || icon}
+            text={text}
           />
-        )}
-      </div>
-    );
-  }
+          {renderMenu && (
+            <SelectboxMenu
+              isOpen={isOpen}
+              onAnimationComplete={handleAnimationComplete}
+              onSearchChange={setSearchQuery}
+              totalOptions={options.length}
+              searchQuery={searchQuery}
+              options={filteredOptions}
+              onSelect={handleSelect}
+              direction={direction}
+              menuWidth={menuWidth}
+              rounded={rounded}
+              triggerRef={selectRef}
+              menuRef={menuRef}
+              blurry={blurry}
+              size={size}
+              focusedIndex={focusedIndex}
+              selectedOption={selectedOption}
+            />
+          )}
+        </div>
+      );
+    }
+  )
 );
+
+Selectbox.displayName = "Selectbox";

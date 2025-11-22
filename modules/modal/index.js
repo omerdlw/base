@@ -8,6 +8,7 @@ import { useModal } from "@/modules/modal/context";
 import { BACKDROP_VARIANTS, getModalVariants, POSITION_CLASSES } from "./utils";
 import { CN } from "@/lib/utils";
 import { useModalRegistry } from "../registry/context";
+import { ModuleError } from "@/components/error-boundary";
 
 const Modal = () => {
   const {
@@ -73,11 +74,13 @@ const Modal = () => {
             initial="hidden"
             exit="exit"
           >
-            <SpecificModalComponent
-              header={{ title, description }}
-              close={closeModal}
-              data={data}
-            />
+            <ModuleError name={modalType}>
+              <SpecificModalComponent
+                header={{ title, description }}
+                close={closeModal}
+                data={data}
+              />
+            </ModuleError>
           </motion.div>
         </div>
       )}
