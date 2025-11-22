@@ -48,8 +48,8 @@ export const ErrorUI = ({
           <div className="mb-6 flex justify-center">
             <div className="relative">
               <div className="absolute inset-0 animate-ping rounded-full bg-error/20"></div>
-              <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-error/10 text-error border border-error/20">
-                <AlertTriangle className="h-8 w-8" />
+              <div className="relative flex size-16 items-center justify-center rounded-primary bg-error/10 text-error border border-error/20">
+                <AlertTriangle className="size-6" />
               </div>
             </div>
           </div>
@@ -57,7 +57,7 @@ export const ErrorUI = ({
           <h2 className="mb-2 text-xl font-bold tracking-tight text-error">
             {title || "SYSTEM FAILURE"}
           </h2>
-          <p className="mb-6 text-sm text-neutral-400">
+          <p className="mb-6 text-sm opacity-70">
             {message ||
               error?.message ||
               "A critical system error has occurred."}
@@ -66,7 +66,7 @@ export const ErrorUI = ({
           <div className="flex gap-3 justify-center">
             <button
               onClick={resetError}
-              className="group flex items-center gap-2 rounded-lg bg-error px-4 py-2 text-sm font-medium text-white transition-all hover:bg-error"
+              className="group flex items-center gap-2 rounded-primary cursor-pointer bg-error/60 px-4 py-2 text-sm transition-all hover:bg-error"
             >
               <RefreshCw className="h-4 w-4 transition-transform group-hover:rotate-180" />
               Retry System
@@ -75,7 +75,7 @@ export const ErrorUI = ({
             {isFull && (
               <button
                 onClick={() => window.location.reload()}
-                className="flex items-center gap-2 rounded-lg border border-neutral-800 bg-neutral-900 px-4 py-2 text-sm font-medium text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white"
+                className="flex items-center gap-2 rounded-primary cursor-pointer bg-error/60 px-4 py-2 text-sm transition-all hover:bg-error"
               >
                 <Power className="h-4 w-4" />
                 Reboot

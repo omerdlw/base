@@ -30,16 +30,21 @@ export default function TestUIPage() {
     nav,
   });
 
+  // State management
   const [toggleState, setToggleState] = useState({
     sm: false,
     md: true,
     lg: false,
+    disabled: true,
   });
+
   const [checkboxState, setCheckboxState] = useState({
     sm: false,
     md: true,
     lg: false,
+    disabled: true,
   });
+
   const [radioValue, setRadioValue] = useState("1");
   const [inputValue, setInputValue] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
@@ -55,43 +60,60 @@ export default function TestUIPage() {
 
   return (
     <Template>
-      <div className="w-full min-h-screen p-8 pb-32 space-y-12 overflow-y-auto">
-        <section className="space-y-4">
+      <div
+        style={{
+          backgroundImage:
+            "url(https://wallpaper.forfun.com/fetch/bd/bd286d338ecdb4785174e5050f67c65d.jpeg?w=1470&r=0.5625&f=webp)",
+        }}
+        className="w-screen h-screen -z-10 fixed inset-0 bg-cover bg-center bg-no-repeat"
+      ></div>
+      <div className="w-full h-screen scroll-auto p-8 pb-32 space-y-12 overflow-y-auto">
+        {/* BUTTONS */}
+        <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
             Buttons
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
-            <div className="space-y-2">
-              <h3 className="text-xs opacity-50 uppercase">Sizes</h3>
-              <div className="flex items-center gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="space-y-3">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Sizes
+              </h3>
+              <div className="flex flex-wrap items-center gap-3">
                 <Button size="sm" text="Small" />
                 <Button size="md" text="Medium" />
                 <Button size="lg" text="Large" />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-xs opacity-50 uppercase">Styles</h3>
-              <div className="flex items-center gap-2">
+            <div className="space-y-3">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Styles
+              </h3>
+              <div className="flex flex-wrap items-center gap-3">
                 <Button text="Default" />
-                <Button text="Blurry" blurry />
+                <Button text="No Glass" noGlass />
                 <Button text="Tinted" tinted icon="solar:star-bold" />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-xs opacity-50 uppercase">States</h3>
-              <div className="flex items-center gap-2">
+            <div className="space-y-3">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                States
+              </h3>
+              <div className="flex flex-wrap items-center gap-3">
                 <Button text="Loading" loading />
+                <Button icon="solar:add-circle-bold" text="Loading" loading />
                 <Button text="Disabled" disabled />
                 <Button icon="solar:settings-bold" />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="text-xs opacity-50 uppercase">Rounded</h3>
-              <div className="flex items-center gap-2">
+            <div className="space-y-3">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Rounded
+              </h3>
+              <div className="flex flex-wrap items-center gap-3">
                 <Button text="Pri" rounded="primary" size="sm" />
                 <Button text="Sec" rounded="secondary" size="sm" />
                 <Button text="Ter" rounded="tertiary" size="sm" />
@@ -99,63 +121,97 @@ export default function TestUIPage() {
               </div>
             </div>
           </div>
+
+          <div className="space-y-3">
+            <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+              With Description
+            </h3>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button text="Action" description="Click to perform" />
+              <Button
+                text="Tinted"
+                description="With description"
+                tinted
+                icon="solar:bolt-bold"
+              />
+            </div>
+          </div>
         </section>
 
-        <section className="space-y-4">
+        {/* INPUTS */}
+        <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
             Inputs
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-3">
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Variants
+              </h3>
               <Input
                 label="Default Input"
                 placeholder="Type something..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />
-              <Input
-                label="With Icon"
-                icon="solar:user-bold"
-                placeholder="Username"
-              />
-              <Input label="Required" required placeholder="Required field" />
-            </div>
-
-            <div className="space-y-3">
-              <Input label="Blurry Style" blurry placeholder="Glassmorphism" />
+              <Input label="No Glass" noGlass placeholder="Solid background" />
               <Input
                 label="No Border"
                 noBorder
                 placeholder="Clean look"
                 icon="solar:magnifer-linear"
               />
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                States & Validation
+              </h3>
+              <Input label="Required" required placeholder="Required field" />
               <Input
                 label="Error State"
                 error="Invalid email address"
                 value="wrong@input"
                 onChange={() => {}}
               />
+              <Input label="Disabled" disabled value="Locked value" />
             </div>
 
-            <div className="space-y-3">
-              <Input label="Disabled" disabled value="Locked value" />
-              <div className="flex gap-2">
-                <Input size="sm" placeholder="Small" />
-                <Input size="lg" placeholder="Large" />
-              </div>
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Sizes & Icons
+              </h3>
+              <Input
+                size="sm"
+                placeholder="Small Input"
+                icon="solar:pen-new-square-linear"
+              />
+              <Input
+                size="md"
+                placeholder="Medium Input"
+                icon="solar:pen-new-square-linear"
+              />
+              <Input
+                size="lg"
+                placeholder="Large Input"
+                icon="solar:pen-new-square-linear"
+              />
             </div>
           </div>
         </section>
 
-        <section className="space-y-4">
+        {/* SELECTBOX */}
+        <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
             Selectbox
           </h2>
 
-          <div className="flex flex-wrap gap-4 items-start">
-            <div className="w-64 space-y-2">
-              <h3 className="text-xs opacity-50 uppercase">Default</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-start">
+            <div className="space-y-3">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Default
+              </h3>
               <Selectbox
                 options={dummyOptions}
                 onChange={setSelectedOption}
@@ -164,40 +220,50 @@ export default function TestUIPage() {
               />
             </div>
 
-            <div className="w-64 space-y-2">
-              <h3 className="text-xs opacity-50 uppercase">Blurry & Icon</h3>
+            <div className="space-y-3">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                No Glass & Icon
+              </h3>
               <Selectbox
-                blurry
+                noGlass
                 icon="solar:widget-bold"
                 options={dummyOptions}
                 text="With Icon"
               />
             </div>
 
-            <div className="w-48 space-y-2">
-              <h3 className="text-xs opacity-50 uppercase">Small</h3>
+            <div className="space-y-3">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Small
+              </h3>
               <Selectbox size="sm" options={dummyOptions} placeholder="Small" />
             </div>
 
-            <div className="w-48 space-y-2">
-              <h3 className="text-xs opacity-50 uppercase">Disabled</h3>
+            <div className="space-y-3">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Disabled
+              </h3>
               <Selectbox disabled placeholder="Locked" />
             </div>
           </div>
         </section>
 
-        <section className="space-y-4">
+        {/* TOGGLES, CHECKBOXES, RADIOS */}
+        <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
-            Toggles & Tooltips
+            Toggles, Checkboxes & Radios
           </h2>
 
-          <div className="flex flex-wrap gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {/* Toggles */}
             <div className="space-y-4">
-              <h3 className="text-xs opacity-50 uppercase">Toggles</h3>
-              <div className="space-y-2">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Toggles
+              </h3>
+              <div className="space-y-3">
                 <ToggleSwitch
                   size="sm"
-                  label="Small"
+                  label="Small Toggle"
                   checked={toggleState.sm}
                   onChange={(checked) =>
                     setToggleState((p) => ({ ...p, sm: checked }))
@@ -205,7 +271,7 @@ export default function TestUIPage() {
                 />
                 <ToggleSwitch
                   size="md"
-                  label="Medium"
+                  label="Medium Toggle"
                   checked={toggleState.md}
                   onChange={(checked) =>
                     setToggleState((p) => ({ ...p, md: checked }))
@@ -213,18 +279,27 @@ export default function TestUIPage() {
                 />
                 <ToggleSwitch
                   size="lg"
-                  label="Large"
+                  label="Large Toggle"
                   checked={toggleState.lg}
                   onChange={(checked) =>
                     setToggleState((p) => ({ ...p, lg: checked }))
                   }
                 />
+                <ToggleSwitch
+                  label="Disabled Toggle"
+                  checked={toggleState.disabled}
+                  disabled
+                  onChange={() => {}}
+                />
               </div>
             </div>
 
+            {/* Checkboxes */}
             <div className="space-y-4">
-              <h3 className="text-xs opacity-50 uppercase">Checkboxes</h3>
-              <div className="space-y-2">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Checkboxes
+              </h3>
+              <div className="space-y-3">
                 <Checkbox
                   size="sm"
                   label="Small Checkbox"
@@ -249,12 +324,21 @@ export default function TestUIPage() {
                     setCheckboxState((p) => ({ ...p, lg: checked }))
                   }
                 />
+                <Checkbox
+                  label="Disabled Checkbox"
+                  checked={checkboxState.disabled}
+                  disabled
+                  onChange={() => {}}
+                />
               </div>
             </div>
 
+            {/* Radios */}
             <div className="space-y-4">
-              <h3 className="text-xs opacity-50 uppercase">Radios</h3>
-              <div className="space-y-2">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Radios
+              </h3>
+              <div className="space-y-3">
                 <Radio
                   name="radio-group"
                   value="1"
@@ -276,44 +360,79 @@ export default function TestUIPage() {
                   checked={radioValue === "3"}
                   onChange={setRadioValue}
                 />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-xs opacity-50 uppercase">Tooltips</h3>
-              <div className="flex gap-4">
-                <Tooltip content="This is a tooltip" position="top">
-                  <Button text="Hover Me (Top)" />
-                </Tooltip>
-                <Tooltip content="Bottom tooltip" position="bottom">
-                  <div className="p-3 bg-default/10 rounded-secondary cursor-help">
-                    <Icon icon="solar:info-circle-bold" />
-                  </div>
-                </Tooltip>
+                <Radio
+                  name="radio-group-disabled"
+                  value="4"
+                  label="Disabled Option"
+                  checked={true}
+                  disabled
+                  onChange={() => {}}
+                />
               </div>
             </div>
           </div>
         </section>
 
-        <section className="space-y-4">
+        {/* TOOLTIPS & COLOR PICKER */}
+        <section className="space-y-6">
           <h2 className="text-xl font-bold opacity-80 border-b border-default/10 pb-2">
-            Color Picker
+            Tooltips & Color Picker
           </h2>
-          <div className="max-w-md p-4 border border-default/10 rounded-primary bg-black/20">
-            <ColorPicker
-              value={color}
-              onChange={setColor}
-              presets={["#3aa7d6", "#e00f5c", "#8fe00f", "#e08f0f"]}
-            />
-            <div className="mt-4 flex items-center gap-2 text-sm">
-              <span>Selected:</span>
-              <span className="font-mono" style={{ color: color }}>
-                {color}
-              </span>
-              <div
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: color }}
-              />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Tooltips
+              </h3>
+              <div className="flex flex-wrap gap-4">
+                <Tooltip content="Top Tooltip" position="top">
+                  <Button text="Top" size="sm" />
+                </Tooltip>
+                <Tooltip content="Bottom Tooltip" position="bottom">
+                  <Button text="Bottom" size="sm" />
+                </Tooltip>
+                <Tooltip content="Left Tooltip" position="left">
+                  <Button text="Left" size="sm" />
+                </Tooltip>
+                <Tooltip content="Right Tooltip" position="right">
+                  <Button text="Right" size="sm" />
+                </Tooltip>
+              </div>
+              <div className="mt-4">
+                <Tooltip content="Info tooltip on icon" position="right">
+                  <div className="p-3 bg-default/10 rounded-full w-fit cursor-help hover:bg-default/20 transition">
+                    <Icon icon="solar:info-circle-bold" className="text-xl" />
+                  </div>
+                </Tooltip>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-xs opacity-50 uppercase font-semibold tracking-wider">
+                Color Picker
+              </h3>
+              <div className="max-w-md p-4 border border-default/10 rounded-primary bg-black/20 backdrop-blur-md">
+                <ColorPicker
+                  value={color}
+                  onChange={setColor}
+                  presets={["#3aa7d6", "#e00f5c", "#8fe00f", "#e08f0f"]}
+                />
+                <div className="mt-4 flex items-center gap-3 text-sm border-t border-default/10 pt-3">
+                  <span className="opacity-70">Selected Color:</span>
+                  <div className="flex items-center gap-2 bg-default/5 px-2 py-1 rounded-md">
+                    <div
+                      className="w-4 h-4 rounded-full shadow-sm"
+                      style={{ backgroundColor: color }}
+                    />
+                    <span
+                      className="font-mono font-bold"
+                      style={{ color: color }}
+                    >
+                      {color}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

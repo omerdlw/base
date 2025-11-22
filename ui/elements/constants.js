@@ -1,15 +1,9 @@
 "use client";
 
-// ============================================================================
-// STYLES
-// ============================================================================
-
-// Hata almamak için ekledik
 export const DISABLED_CLASS =
   "opacity-50 cursor-not-allowed pointer-events-none";
 
 export const COMPONENT_STYLES = {
-  // Orijinal stil
   base: "center relative cursor-pointer group bg-black/40 border border-default/10 hover:border-primary p-1",
   iconContainer: "center w-auto h-full bg-default/5",
   blur: {
@@ -20,7 +14,7 @@ export const COMPONENT_STYLES = {
     container: "bg-black/40 border border-default/10",
     hover: "hover:bg-black/40",
     focus: "focus-within:border-primary",
-    disabled: "opacity-50 cursor-not-allowed",
+    disabled: "text-white/50 cursor-not-allowed hover:border-transparent",
   },
 };
 
@@ -53,10 +47,6 @@ export const TOOLTIP_POSITION_CLASSES = {
   left: "right-full top-1/2 -translate-y-1/2 mr-2",
   right: "left-full top-1/2 -translate-y-1/2 ml-2",
 };
-
-// ============================================================================
-// SIZES
-// ============================================================================
 
 export const SIZE_CONFIGURATIONS = {
   sm: {
@@ -111,10 +101,6 @@ export const TOGGLE_SIZE_CLASSES = {
     container: "w-16 h-9",
   },
 };
-
-// ============================================================================
-// CONFIGURATION
-// ============================================================================
 
 export const CONFIG = {
   menu: {

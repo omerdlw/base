@@ -115,7 +115,7 @@ const SelectboxMenu = memo(
     options,
     rounded = "secondary",
     triggerRef,
-    blurry,
+    noGlass,
     size,
     focusedIndex,
     selectedOption,
@@ -179,7 +179,7 @@ const SelectboxMenu = memo(
         window.removeEventListener("scroll", throttledUpdatePosition, true);
         window.removeEventListener("resize", throttledUpdatePosition);
       };
-    }, [triggerRef, throttledUpdatePosition, updatePosition]);
+    }, [triggerRef, throttledUpdatePosition, updatePosition, mounted]);
 
     useEffect(() => {
       if (focusedIndex >= 0 && focusedItemRef.current) {
@@ -195,86 +195,91 @@ const SelectboxMenu = memo(
 
     const menuContent = (
       <div
-        ref={menuRef}
-        className={CN(
-          "border-default/10 bg-default/5 absolute top-0 overflow-hidden border p-1 backdrop-blur-xl",
-          rounded && `rounded-${rounded}`,
-          "z-100",
-          blurry
-            ? COMPONENT_STYLES.blur.enabled
-            : COMPONENT_STYLES.blur.disabled
-        )}
         style={{
+          position: "absolute",
           top: `${position.top}px`,
           left: `${position.left}px`,
           width: position.width ? `${position.width}px` : "auto",
+          transform: position.transform,
+          zIndex: 100,
         }}
-        role="listbox"
-        aria-label="Options"
       >
-        {showSearch && (
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={CN(
-              "p-2.5 transition-colors bg-black/40",
-              "hover:bg-default/5 focus:bg-default/5",
-              GET_ROUNDED_CLASS(nextRounded, "top")
-            )}
-          >
-            <input
-              className={CN("w-full bg-transparent outline-none")}
-              placeholder="Search in options"
-              onChange={handleSearchChange}
-              value={searchQuery}
-              type="text"
-              autoFocus
-              aria-label="Search options"
-            />
-          </div>
-        )}
         <div
-          ref={optionsContainerRef}
+          ref={menuRef}
           className={CN(
-            CONFIG.menu.maxHeight +
-              " space-y-0.5 overflow-x-hidden overflow-y-auto",
-            rounded && `rounded-b-${nextRounded}`,
-            showSearch && "mt-0.5"
+            "border-default/10 bg-default/5 overflow-hidden border p-1 backdrop-blur-xl",
+            rounded && `rounded-${rounded}`,
+            !noGlass
+              ? COMPONENT_STYLES.blur.enabled
+              : COMPONENT_STYLES.blur.disabled
           )}
+          role="listbox"
+          aria-label="Options"
         >
-          {options.length === 0 ? (
+          {showSearch && (
             <div
+              onClick={(e) => e.stopPropagation()}
               className={CN(
-                "cursor-not-allowed bg-black/40 p-2.5 transition-colors",
-                sizeConfig.text,
-                showSearch
-                  ? GET_ROUNDED_CLASS(nextRounded, "bottom")
-                  : GET_ROUNDED_CLASS(nextRounded, "full")
+                "p-2.5 transition-colors bg-black/40",
+                "hover:bg-default/5 focus:bg-default/5",
+                GET_ROUNDED_CLASS(nextRounded, "top")
               )}
             >
-              <span className="text-sm opacity-70">No options found</span>
+              <input
+                className={CN("w-full bg-transparent outline-none")}
+                placeholder="Search in options"
+                onChange={handleSearchChange}
+                value={searchQuery}
+                type="text"
+                autoFocus
+                aria-label="Search options"
+              />
             </div>
-          ) : (
-            options.map((option, index) => {
-              const isFocused = index === focusedIndex;
-              const isSelected = selectedOption?.value === option.value;
-
-              return (
-                <SelectboxOption
-                  key={option.value}
-                  option={option}
-                  index={index}
-                  totalCount={options.length}
-                  isFocused={isFocused}
-                  isSelected={isSelected}
-                  onSelect={onSelect}
-                  sizeConfig={sizeConfig}
-                  rounded={nextRounded}
-                  showSearch={showSearch}
-                  focusedItemRef={focusedItemRef}
-                />
-              );
-            })
           )}
+          <div
+            ref={optionsContainerRef}
+            className={CN(
+              CONFIG.menu.maxHeight +
+                " space-y-0.5 overflow-x-hidden overflow-y-auto",
+              rounded && `rounded-b-${nextRounded}`,
+              showSearch && "mt-0.5"
+            )}
+          >
+            {options.length === 0 ? (
+              <div
+                className={CN(
+                  "cursor-not-allowed bg-black/40 p-2.5 transition-colors",
+                  sizeConfig.text,
+                  showSearch
+                    ? GET_ROUNDED_CLASS(nextRounded, "bottom")
+                    : GET_ROUNDED_CLASS(nextRounded, "full")
+                )}
+              >
+                <span className="text-sm opacity-70">No options found</span>
+              </div>
+            ) : (
+              options.map((option, index) => {
+                const isFocused = index === focusedIndex;
+                const isSelected = selectedOption?.value === option.value;
+
+                return (
+                  <SelectboxOption
+                    key={option.value}
+                    option={option}
+                    index={index}
+                    totalCount={options.length}
+                    isFocused={isFocused}
+                    isSelected={isSelected}
+                    onSelect={onSelect}
+                    sizeConfig={sizeConfig}
+                    rounded={nextRounded}
+                    showSearch={showSearch}
+                    focusedItemRef={focusedItemRef}
+                  />
+                );
+              })
+            )}
+          </div>
         </div>
       </div>
     );
@@ -345,7 +350,7 @@ export const Selectbox = memo(
         rounded = "secondary",
         direction = "top",
         loading = false,
-        blurry = false,
+        noGlass = false,
         disabled = false,
         options = [],
         description,
@@ -422,7 +427,7 @@ export const Selectbox = memo(
             sizeConfig.button.withText,
             "relative cursor-pointer",
             isOpen ? "z-20" : "z-10",
-            blurry
+            !noGlass
               ? COMPONENT_STYLES.blur.enabled
               : COMPONENT_STYLES.blur.disabled,
             className,
@@ -466,7 +471,7 @@ export const Selectbox = memo(
               rounded={rounded}
               triggerRef={selectRef}
               menuRef={menuRef}
-              blurry={blurry}
+              noGlass={noGlass}
               size={size}
               focusedIndex={focusedIndex}
               selectedOption={selectedOption}

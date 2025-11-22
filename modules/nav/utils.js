@@ -1,6 +1,6 @@
-import { ANIMATION_DURATIONS } from '@/config/constants';
-import { CN } from '@/lib/utils';
-import { ANIMATION } from './config';
+import { ANIMATION_DURATIONS } from "@/config/constants";
+import { CN } from "@/lib/utils";
+import { ANIMATION } from "./config";
 
 export const ANIMATION_PROPS = (expanded, position, showBorder) => {
   const { offsetY: expandedOffsetY } = ANIMATION.expanded;
@@ -9,8 +9,8 @@ export const ANIMATION_PROPS = (expanded, position, showBorder) => {
 
   return {
     className: CN(
-      'rounded-primary border-default/15 absolute left-1/2 h-auto w-full -translate-x-1/2 transform-gpu cursor-pointer overflow-hidden border-2 p-3 backdrop-blur-lg transition will-change-transform bg-black/40',
-      showBorder && 'border-primary',
+      "rounded-primary border-default/15 absolute left-1/2 h-auto w-full -translate-x-1/2 transform-gpu cursor-pointer overflow-hidden border-2 p-3 backdrop-blur-xl transition will-change-transform bg-black/40",
+      showBorder && "border-primary"
     ),
     animate: {
       y: expanded ? position * expandedOffsetY : position * collapsedOffsetY,

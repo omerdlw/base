@@ -10,7 +10,7 @@ export const Input = memo(
     (
       {
         rounded = "secondary",
-        blurry = false,
+        noGlass = false,
         type = "text",
         placeholder,
         size = "md",
@@ -43,8 +43,8 @@ export const Input = memo(
               "group flex w-full items-center border transition",
               COMPONENT_STYLES.shared.focus,
               error ? "border-error" : "border-default/10",
-              noBorder && "bg-default/5! border-0! border-transparent!",
-              blurry
+              noBorder && "bg-default/5! border-0!",
+              !noGlass
                 ? COMPONENT_STYLES.blur.enabled
                 : COMPONENT_STYLES.blur.disabled,
               "bg-black/40",

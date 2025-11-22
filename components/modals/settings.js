@@ -53,7 +53,7 @@ export default function SettingsModal({ header, close }) {
                     "center py-4 h-auto rounded-secondary transition-all duration-300",
                     isSelected
                       ? "border-primary bg-primary/10 text-primary"
-                      : "border-transparent opacity-60 hover:opacity-100 bg-default/5 hover:bg-default/10"
+                      : "border-transparent hover:bg-default/10 bg-default/5"
                   )}
                 >
                   <Icon icon={item.icon} size={26} />

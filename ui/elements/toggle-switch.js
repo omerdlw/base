@@ -58,7 +58,7 @@ export const ToggleSwitch = memo(
             <div
               className={CN(
                 "rounded-full shadow-inner transition",
-                checked ? "bg-primary" : "bg-default/10",
+                checked ? "bg-primary" : "bg-black/40",
                 rounded && `rounded-${rounded}`,
                 sizeConfig.container
               )}
@@ -66,8 +66,7 @@ export const ToggleSwitch = memo(
             <div
               ref={knobRef}
               className={CN(
-                "absolute rounded-full bg-white shadow", // Removed transition-transform to let GSAP handle it
-                // checked && sizeConfig.translate, // Removed class-based translation
+                "absolute rounded-full bg-white shadow",
                 rounded && `rounded-${iconRounded}`,
                 sizeConfig.knob
               )}

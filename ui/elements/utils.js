@@ -39,15 +39,15 @@ export const CALCULATE_MENU_POSITION = (
   const scrollX = window.scrollX;
   const scrollY = window.scrollY;
 
+  let transform = "translateY(0)";
   let top;
   let left = triggerRect.left + scrollX;
   const width = menuWidth || triggerRect.width;
 
   switch (direction) {
     case "top":
-      top = menuRect
-        ? triggerRect.bottom + scrollY - menuRect.height
-        : triggerRect.bottom + scrollY - 200;
+      top = triggerRect.bottom + scrollY;
+      transform = "translateY(-100%)";
       break;
     case "left":
       left = menuRect
@@ -61,11 +61,11 @@ export const CALCULATE_MENU_POSITION = (
       break;
     case "bottom":
     default:
-      top = triggerRect.bottom + scrollY + margin;
+      top = triggerRect.top + scrollY;
       break;
   }
 
-  return { top, left, width };
+  return { top, left, width, transform };
 };
 
 export const GET_OPTION_ROUNDED_CLASS = (

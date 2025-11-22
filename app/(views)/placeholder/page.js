@@ -17,7 +17,6 @@ export default function Placeholder() {
           onClick={() => toast.info("Test butonu tıklandı")}
           icon="solar:archive-bold"
           text="Test"
-          blurry
         />
       ),
       right: (
@@ -30,7 +29,6 @@ export default function Placeholder() {
           onChange={() => {}}
           direction="top"
           text="Seçim"
-          blurry
         />
       ),
     }),

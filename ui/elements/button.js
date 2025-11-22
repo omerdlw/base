@@ -18,11 +18,10 @@ export const Button = memo(
       {
         rounded = "secondary",
         loading = false,
-        blurry = false,
+        noGlass = false,
         tinted = false,
         disabled = false,
         loadingText,
-        loadingIcon,
         size = "md",
         description,
         className,
@@ -37,19 +36,17 @@ export const Button = memo(
     ) => {
       const internalRef = useRef(null);
 
-      // Ensure external ref (function or object) is updated with the DOM node
       useImperativeHandle(ref, () => internalRef.current);
 
       const iconRounded = GET_NEXT_ROUNDED_LEVEL(rounded);
       const sizeConfig = SIZE_CONFIGURATIONS[size];
 
-      const displayIcon = loading ? (loadingIcon ?? icon) : icon;
+      const displayIcon = loading ? "mingcute:loading-3-fill" : icon;
       const displayText = loading ? (loadingText ?? text) : text;
 
       const isIconOnly = Boolean(displayIcon && !displayText);
       const isDisabled = disabled || loading;
 
-      // Apply animations to internalRef
       useHoverEffect(internalRef, isDisabled);
       useClickEffect(internalRef, isDisabled);
 
@@ -61,10 +58,12 @@ export const Button = memo(
         COMPONENT_STYLES.base,
         buttonSizeClass,
         rounded && `rounded-${rounded}`,
-        blurry ? COMPONENT_STYLES.blur.enabled : COMPONENT_STYLES.blur.disabled,
+        !noGlass
+          ? COMPONENT_STYLES.blur.enabled
+          : COMPONENT_STYLES.blur.disabled,
         tinted && "hover:bg-primary hover:text-white dark:hover:text-white",
         isDisabled && COMPONENT_STYLES.shared.disabled,
-        loading && "cursor-wait animate-pulse",
+        loading && "cursor-wait",
         className
       );
 
@@ -79,15 +78,15 @@ export const Button = memo(
 
       const content = (
         <>
-          {(displayIcon || (loading && !displayText)) && (
+          {((icon && displayIcon) || (loading && !displayText)) && (
             <IconWrapper
               className={CN(
-                "center h-full shrink-0 transition",
+                "center h-full shrink-0 transition ",
                 sizeConfig.icon,
                 tinted
                   ? "group-hover:bg-black/10"
                   : "group-hover:bg-primary group-hover:text-white",
-                isIconOnly && "w-full" // Ensure icon centers in icon-only mode
+                isIconOnly && "w-full"
               )}
               rounded={iconRounded}
               loading={loading}
@@ -103,7 +102,7 @@ export const Button = memo(
                   sizeConfig.text,
                   description && "font-semibold",
                   loading &&
-                    "animate-shine bg-gradient-to-r from-transparent via-white/50 to-transparent bg-[length:200%_100%] bg-clip-text text-transparent"
+                    "animate-shine bg-linear-to-r from-transparent via-white/50 to-transparent bg-size-[200%_100%] bg-clip-text text-transparent"
                 )}
               >
                 {displayText}

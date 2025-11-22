@@ -67,7 +67,7 @@ export default function TestUIPage() {
               <h3 className="text-xs opacity-50 uppercase">Styles</h3>
               <div className="flex items-center gap-2">
                 <Button text="Default" />
-                <Button text="Blurry" blurry />
+                <Button text="Blurry" />
                 <Button text="Tinted" tinted icon="solar:star-bold" />
               </div>
             </div>
@@ -115,7 +115,7 @@ export default function TestUIPage() {
             </div>
 
             <div className="space-y-3">
-              <Input label="Blurry Style" blurry placeholder="Glassmorphism" />
+              <Input label="Blurry Style" placeholder="Glassmorphism" />
               <Input
                 label="No Border"
                 noBorder
@@ -159,7 +159,6 @@ export default function TestUIPage() {
             <div className="w-64 space-y-2">
               <h3 className="text-xs opacity-50 uppercase">Blurry & Icon</h3>
               <Selectbox
-                blurry
                 icon="solar:widget-bold"
                 options={dummyOptions}
                 text="With Icon"
